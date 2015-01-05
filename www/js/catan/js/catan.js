@@ -374,7 +374,7 @@ Catan = (function () {
         return terrains;
     }
 
-    Catan.Map.prototype.generateNumbers = function (trioScoreLimit) {
+    Catan.Map.prototype.generateNumbers = function (tileTrioScoreLimit) {
         var map = this;
         var numbers = [11, 12, 9, 4, 6, 5, 10, 3, 11, 4, 8, 8, 10, 9, 3, 5, 2, 6];
         // sort tdsc DESC
@@ -494,7 +494,7 @@ Catan = (function () {
                 j = coordinates[c].y;
                 var current = map.get(i, j);
                 var a, b;
-                var trioLimit = trioScoreLimit;
+                var trioLimit = tileTrioScoreLimit;
                 var duoLimit = 9;
                 // avoid desert
                 if (current.number != undefined) {
@@ -675,8 +675,8 @@ Catan = (function () {
     //////////////////////////////////////////////////
 
 
-    Catan.generateMap = function (canvas, trioScoreLimit) {
-        trioScoreLimit = trioScoreLimit || 12;
+    Catan.generateMap = function (canvas, tileTrioScoreLimit) {
+        tileTrioScoreLimit = tileTrioScoreLimit || 12;
 
         var terrains;
         var res;
@@ -689,7 +689,7 @@ Catan = (function () {
                 terrains = map.generateTerrains();
             } while (terrains.length > 0);
 
-            res = map.generateNumbers(trioScoreLimit);
+            res = map.generateNumbers(tileTrioScoreLimit);
         } while (!res);
 
         map.generateHarbors();
