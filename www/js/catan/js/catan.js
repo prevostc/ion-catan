@@ -63,14 +63,14 @@ Catan = (function () {
                     break;
             }
             return color;
-        }
+        };
 
         var width = size.width,
-        // scaled width
             height = size.height,
-        // scaled height
-            cx = (x + 1) * (width + dist) - ((y + 1) % 2) * (width + dist) / 2,
-            cy = (y + 1) * (3 / 4 * height + dist);
+            mapWidth = width * 7,
+            mapHeight = height * 7 - (1/4 * height * 6),
+            cx = x * (width + dist) - ((y + 1) % 2) * (width + dist) / 2 + width/2 + size.canvasWidth/2 - mapWidth/2,
+            cy = y * (3 / 4 * height + dist) + height/2 + size.canvasHeight/2 - mapHeight/2;
 
         ctx.fillStyle = getColorFromTerrain(this.terrain);
         ctx.beginPath();
@@ -261,6 +261,8 @@ Catan = (function () {
         var size = {
             width: screenW / 9,
             height: screenW / 9 + screenW / 90,
+            canvasWidth: canvas.width,
+            canvasHeight: canvas.height
         };
         var dist = 2;
 

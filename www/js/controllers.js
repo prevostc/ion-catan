@@ -4,12 +4,13 @@ angular.module('starter.controllers', [])
     $scope.generate = function() {
         Catan.generateMap(document.querySelector('.canvas'), Settings.getTileTrioScoreLimit());
     };
+    setTimeout(function(){
+        var canvas = document.querySelector('.canvas');
+        canvas.width = document.querySelector('.canvas-container').offsetWidth;
+        canvas.height = document.querySelector('.canvas-container').offsetHeight;
 
-    var canvas = document.querySelector('.canvas');
-    canvas.width = document.querySelector('.canvas-container').offsetWidth;
-    canvas.height = document.querySelector('.scroll-content').offsetHeight;
-
-    $scope.generate();
+        $scope.generate();
+    }, 200);
 })
 
 .controller('SettingsCtrl', function($scope, Settings) {
