@@ -89,7 +89,7 @@ Catan = (function () {
             ctx.arc(cx, cy, r, 0, Math.PI * 2, true);
             ctx.closePath();
             ctx.fill();
-        }
+        };
 
         if (this.terrain == Catan.T.Harbor) {
             fillCircle(cx, cy, 9, getColorFromTerrain(this.circle));
@@ -101,13 +101,13 @@ Catan = (function () {
             ctx.fillStyle = "rgb(0, 0, 0)";
             ctx.font = "8pt Arial";
             ctx.fillText("[" + x + "," + y + "]", cx - width / 4 + 1, cy - 5);
-            if (this.number != undefined) {
+            if (this.number !== undefined) {
                 ctx.font = "12pt Arial";
                 ctx.fillText(this.number + "|" + Catan.Tools.tdsc(this.number), cx - width / 4, cy + 10);
             }
         } else {
             // draw coordinates
-            if (this.number != undefined) {
+            if (this.number !== undefined) {
                 //draw a circle
                 fillCircle(cx, cy, Math.min(width, height) / 3, "rgb(255, 255, 255)");
 
@@ -147,8 +147,9 @@ Catan = (function () {
 
 
     Catan.Map.prototype.each = function (callback) {
+        var line;
         for (var col = this.center.col - 1; col <= this.center.col + 1; col++) {
-            for (var line = this.center.line - 2; line <= this.center.line + 2; line++) {
+            for (line = this.center.line - 2; line <= this.center.line + 2; line++) {
                 callback(col, line);
             }
         }
@@ -188,7 +189,7 @@ Catan = (function () {
     };
 
     Catan.Map.prototype.get = function (i, j) {
-        if (this.board[i] == undefined) {
+        if (this.board[i] === undefined) {
             return undefined;
         }
         return this.board[i][j];
@@ -196,8 +197,8 @@ Catan = (function () {
 
     Catan.Map.prototype.eachNeighbour = function (col, line, callback) {
         var orderedNeighbours =
-                (0 == line % 2)
-                    ? [
+                (0 === line % 2) ?
+                [
                     [col - 1, line - 1],
                     [col - 1, line],
                     [col - 1, line + 1],
@@ -217,7 +218,7 @@ Catan = (function () {
         var neighbour;
         for (var i = 0; i < orderedNeighbours.length; i++) {
             neighbour = this.get(orderedNeighbours[i][0], orderedNeighbours[i][1]);
-            if (neighbour != undefined) {
+            if (neighbour !== undefined) {
                 callback(neighbour.x, neighbour.y);
             }
         }
@@ -293,6 +294,7 @@ Catan = (function () {
 
 
     Catan.Map.prototype.generateTerrains = function () {
+        var allowedTerrains;
         var map = this;
         // init map with random terrains
         var terrains = [
@@ -315,7 +317,7 @@ Catan = (function () {
             var a;
             var b;
             map.eachConsecutiveNeighbour(i, j, function (a, b) {
-                return (a.terrain == b.terrain && a.terrain != Catan.T.Empty && a.terrain != undefined);
+                return (a.terrain == b.terrain && a.terrain != Catan.T.Empty && a.terrain !== undefined);
             }, function (ax, ay, bx, by) {
                 a = map.get(ax, ay);
                 b = map.get(bx, by);
@@ -330,7 +332,6 @@ Catan = (function () {
         Catan.Tools.shuffle(emptySpots);
         Catan.Tools.shuffle(terrains);
 
-        var allowedTerrains;
         for (var i = 0; i < emptySpots.length; ++i) {
             allowedTerrains = this.getAllowedTerrains(emptySpots[i].x, emptySpots[i].y, terrains);
 
@@ -340,49 +341,51 @@ Catan = (function () {
             } else {
                 newEmptySpots.push(emptySpots[i]);
             }
-        };
+        }
         emptySpots = newEmptySpots;
 
         // swap as much as possible
-        newEmptySpots = [];
+        var swapped = false;
+        var eachSwapFunction = function (i, j) {
+            if (!swapped && !(i == ex && j == ey) && Catan.Tools.contains(allowedTerrains, map.get(i, j).terrain)) {
+                var currentAllowedTerrains = map.getAllowedTerrains(i, j, allTerrains);
+                for (var t = 0; t < terrains.length && !swapped; t++) {
+                    if (map.get(i, j).terrain != terrains[t] && Catan.Tools.contains(currentAllowedTerrains, terrains[t])) {
+                        // set empty spot terrain to current.terrain
+                        map.get(ex, ey).terrain = map.get(i, j).terrain;
+                        // set current terrain to terrain[t]
+                        map.get(i, j).terrain = terrains[t];
+                        // remove terrain[t] from terrain
+                        terrains = Catan.Tools.removeOne(terrains, terrains[t]);
+                        // set item swapped
+                        swapped = true;
+                    }
+                }
+            }
+        };
+
         for (var cur = 0; cur < emptySpots.length; ++cur) {
             var ex = emptySpots[cur].x;
             var ey = emptySpots[cur].y;
             var allTerrains = [Catan.T.Hills, Catan.T.Pasture, Catan.T.Mountains, Catan.T.Fields, Catan.T.Forest, Catan.T.Desert];
-            var allowedTerrains = this.getAllowedTerrains(ex, ey, allTerrains);
+            allowedTerrains = this.getAllowedTerrains(ex, ey, allTerrains);
             // if smth is allowed
             if (allowedTerrains.length > 0) {
-                var swapped = false;
-                this.each(function (i, j) {
-                    if (!swapped && !(i == ex && j == ey) && Catan.Tools.contains(allowedTerrains, map.get(i, j).terrain)) {
-                        var currentAllowedTerrains = map.getAllowedTerrains(i, j, allTerrains);
-                        for (var t = 0; t < terrains.length && !swapped; t++) {
-                            if (map.get(i, j).terrain != terrains[t] && Catan.Tools.contains(currentAllowedTerrains, terrains[t])) {
-                                // set empty spot terrain to current.terrain
-                                map.get(ex, ey).terrain = map.get(i, j).terrain;
-                                // set current terrain to terrain[t]
-                                map.get(i, j).terrain = terrains[t];
-                                // remove terrain[t] from terrain
-                                terrains = Catan.Tools.removeOne(terrains, terrains[t]);
-                                // set item swapped
-                                swapped = true;
-                            }
-                        }
-                    }
-                });
+                swapped = false;
+                this.each(eachSwapFunction);
             }
         }
 
         return terrains;
-    }
+    };
 
     Catan.Map.prototype.generateNumbers = function (tileTrioScoreLimit) {
-        var map = this;
+        var map = this, i, j;
         var numbers = [11, 12, 9, 4, 6, 5, 10, 3, 11, 4, 8, 8, 10, 9, 3, 5, 2, 6];
         // sort tdsc DESC
         Catan.Tools.shuffle(numbers);
         numbers.sort(function (a, b) {
-            return Catan.Tools.tdsc(b) - Catan.Tools.tdsc(a)
+            return Catan.Tools.tdsc(b) - Catan.Tools.tdsc(a);
         });
 
         // group numbers in 5 groups, 3 groups of 4 numbers, 2 groups of 3 numbers
@@ -396,18 +399,18 @@ Catan = (function () {
         var groupKeys = [Catan.T.Hills, Catan.T.Pasture, Catan.T.Mountains, Catan.T.Fields, Catan.T.Forest];
 
         // fill groups
-        for (var i = 0; i < numbers.length; ++i) {
+        for (i = 0; i < numbers.length; ++i) {
             // add some rand (in case of lowest equality)
             Catan.Tools.shuffle(groupKeys);
             // look for the lowest tdsc sum
-            var lowest = undefined;
-            for (var j = 0; j < groupKeys.length; j++) {
+            var lowest;
+            for (j = 0; j < groupKeys.length; j++) {
                 // continue when size reached
                 if (groups[groupKeys[j]].numbers.length == groups[groupKeys[j]].size) {
                     continue;
                 }
                 // init lowest
-                if (lowest == undefined) {
+                if (lowest === undefined) {
                     lowest = groups[groupKeys[j]];
                     continue;
                 }
@@ -439,11 +442,11 @@ Catan = (function () {
                 var neighbour;
                 map.eachNeighbour(i, j, function (x, y) {
                     neighbour = map.get(x, y);
-                    if (neighbour.number != undefined && Catan.Tools.tdsc(neighbour.number) > max) {
+                    if (neighbour.number !== undefined && Catan.Tools.tdsc(neighbour.number) > max) {
                         max = neighbour.number;
                     }
                     // can't swap with this neighbour
-                    if (maxNeighbourTdsc != undefined && Catan.Tools.tdsc(neighbour.number) > maxNeighbourTdsc) {
+                    if (maxNeighbourTdsc !== undefined && Catan.Tools.tdsc(neighbour.number) > maxNeighbourTdsc) {
                         return;
                     }
                 });
@@ -458,8 +461,8 @@ Catan = (function () {
                 var coord = groups[current.terrain].pos[c];
                 if (Catan.Tools.tdsc(map.get(coord.x, coord.y).number) < maxTdsc) {
                     max = getMax(coord.x, coord.y);
-                    if (max != undefined) {
-                        if (min == undefined || max < min) {
+                    if (max !== undefined) {
+                        if (min === undefined || max < min) {
                             min = max;
                             minCoord = coord;
                         }
@@ -468,7 +471,7 @@ Catan = (function () {
             }
 
             // do the swap
-            if (minCoord != undefined) {
+            if (minCoord !== undefined) {
                 var n = current.number;
                 current.number = map.get(minCoord.x, minCoord.y).number;
                 map.get(minCoord.x, minCoord.y).number = n;
@@ -476,6 +479,34 @@ Catan = (function () {
         };
 
         // do swap if > limit
+        var coordinates = [];
+        var eachPushCoordinatesFunction = function (i, j) {
+            coordinates.push({x: i, y: j});
+        };
+        var isCoupleValidFunction = function (a, b) {
+            return (a.terrain != Catan.T.Empty && b.terrain != Catan.T.Empty && a.number !== undefined && b.number !== undefined);
+        };
+        var doSwapFunction = function (ax, ay, bx, by) {
+            a = map.get(ax, ay);
+            b = map.get(bx, by);
+
+            // when current trio sum is > trioLimit
+            if (trioLimit < Catan.Tools.tdsc(a.number) + Catan.Tools.tdsc(b.number) + Catan.Tools.tdsc(current.number)) {
+                overTrioLimit = true;
+                swapNumber(current, trioLimit - ( Catan.Tools.tdsc(a.number) + Catan.Tools.tdsc(b.number)));
+            }
+
+            // when current and neighbour are > duoLimit
+            if ((duoLimit < Catan.Tools.tdsc(a.number) + Catan.Tools.tdsc(current.number)) || (duoLimit < Catan.Tools.tdsc(b.number) + Catan.Tools.tdsc(current.number))) {
+                overDuoLimit = true;
+                // swap with a neighbour without a neighbour set to 5 tdsc
+                swapNumber(
+                    current,
+                    trioLimit - (Catan.Tools.tdsc(a.number) + Catan.Tools.tdsc(b.number)),
+                    duoLimit - Catan.Tools.tdsc(current.number)
+                );
+            }
+        };
         var overTrioLimit = true;
         var overDuoLimit = true;
         for (var maxRepeat = 0; overTrioLimit && overDuoLimit && maxRepeat < 100; maxRepeat++) {
@@ -483,14 +514,10 @@ Catan = (function () {
             overDuoLimit = false;
 
             // add some entropy
-            var coordinates = [];
-            this.each(function (i, j) {
-                coordinates.push({x: i, y: j});
-            });
+            coordinates = [];
+            this.each(eachPushCoordinatesFunction);
             Catan.Tools.shuffle(coordinates);
 
-            // do swap
-            var j, i;
             for (var c = 0; c < coordinates.length; ++c) {
                 i = coordinates[c].x;
                 j = coordinates[c].y;
@@ -499,33 +526,8 @@ Catan = (function () {
                 var trioLimit = tileTrioScoreLimit;
                 var duoLimit = 9;
                 // avoid desert
-                if (current.number != undefined) {
-                    map.eachConsecutiveNeighbour(i, j, function (a, b) {
-                        return (a.terrain != Catan.T.Empty && b.terrain != Catan.T.Empty && a.number != undefined && b.number != undefined);
-                    }, function (ax, ay, bx, by) {
-                        a = map.get(ax, ay);
-                        b = map.get(bx, by);
-
-                        // when current trio sum is > trioLimit
-                        if (trioLimit < Catan.Tools.tdsc(a.number) + Catan.Tools.tdsc(b.number) + Catan.Tools.tdsc(current.number)) {
-                            overTrioLimit = true;
-                            swapNumber(current, trioLimit - ( Catan.Tools.tdsc(a.number) + Catan.Tools.tdsc(b.number)));
-                        }
-
-                        // when current and neighbour are > duoLimit
-                        if (
-                            (duoLimit < Catan.Tools.tdsc(a.number) + Catan.Tools.tdsc(current.number))
-                                || (duoLimit < Catan.Tools.tdsc(b.number) + Catan.Tools.tdsc(current.number))
-                            ) {
-                            overDuoLimit = true;
-                            // swap with a neighbour without a neighbour set to 5 tdsc
-                            swapNumber(
-                                current,
-                                trioLimit - (Catan.Tools.tdsc(a.number) + Catan.Tools.tdsc(b.number)),
-                                duoLimit - Catan.Tools.tdsc(current.number)
-                            );
-                        }
-                    });
+                if (current.number !== undefined) {
+                    map.eachConsecutiveNeighbour(i, j, isCoupleValidFunction, doSwapFunction);
                 }
             }
         }
@@ -608,7 +610,7 @@ Catan = (function () {
                 }
             }
         }
-    }
+    };
 
     //////////////////////////////////////////////////
     //////////////// TOOLS ///////////////////////////
@@ -618,7 +620,7 @@ Catan = (function () {
 
     Catan.Tools.shuffle = function (a) {
         return a.sort(function () {
-            return 0.5 - Math.random()
+            return 0.5 - Math.random();
         });
     };
 
@@ -655,7 +657,12 @@ Catan = (function () {
     };
 
     Catan.Tools.rotate = function (a, inc) {
-        for (var l = a.length, inc = (Math.abs(inc) >= l && (inc %= l), inc < 0 && (inc += l), inc), i, x; inc; inc = (Math.ceil(l / inc) - 1) * inc - l + (l = inc))
+        console.log(inc);
+        var l = a.length, i, x;
+        inc = Math.abs(inc) >= l && (inc %= l) ||
+            inc < 0 && (inc += l) ||
+            inc;
+        for (; inc; inc = (Math.ceil(l / inc) - 1) * inc - l + (l = inc))
             for (i = l; i > inc; x = a[--i], a[i] = a[i - inc], a[i - inc] = x);
     };
 
