@@ -6,8 +6,6 @@
         this.line = line;
 
         // Make the position immutable
-        Object.freeze(this.column);
-        Object.freeze(this.line);
         Object.freeze(this);
     };
 

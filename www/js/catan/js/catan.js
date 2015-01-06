@@ -27,8 +27,7 @@ Catan = (function () {
         var map;
 
         do {
-
-            map = new Catan.Map(7, 7, [3, 3]);
+            map = new Catan.Map(7, 7, new Catan.Position(3, 3));
             do {
                 terrains = map.generateTerrains();
             } while (terrains.length > 0);

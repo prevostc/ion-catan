@@ -5,8 +5,7 @@
     // 1	2	3	4	5	6	5	4 	3	2	1
     Catan.Hexagon = function (terrain, pos) {
         this.terrain = terrain;
-        this.x = pos[0];
-        this.y = pos[1];
+        this.position = pos;
         this.number = undefined;
         this.circle = undefined;
     };

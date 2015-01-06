@@ -69,8 +69,8 @@
             height = size.height,
             mapWidth = width * 7,
             mapHeight = height * 7 - (1/4 * height * 6),
-            cx = hexagon.x * (width + dist) - ((hexagon.y + 1) % 2) * (width + dist) / 2 + width/2 + size.canvasWidth/2 - mapWidth/2,
-            cy = hexagon.y * (3 / 4 * height + dist) + height/2 + size.canvasHeight/2 - mapHeight/2;
+            cx = hexagon.position.column * (width + dist) - ((hexagon.position.line + 1) % 2) * (width + dist) / 2 + width/2 + size.canvasWidth/2 - mapWidth/2,
+            cy = hexagon.position.line * (3 / 4 * height + dist) + height/2 + size.canvasHeight/2 - mapHeight/2;
 
         ctx.fillStyle = getColorFromTerrain(hexagon.terrain);
         ctx.beginPath();

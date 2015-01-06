@@ -6,64 +6,65 @@
         for (var i = 0; i < width; i++) {
             this.board[i] = [];
             for (var j = 0; j < height; j++) {
-                this.board[i][j] = new Catan.Hexagon(Catan.T.Empty, [i, j]);
+                this.board[i][j] = new Catan.Hexagon(Catan.T.Empty, new Catan.Position(i, j));
             }
         }
-        this.center = { col: center[0], line: center[1]};
+        this.center = center;
     };
 
 
     Catan.Map.prototype.each = function (callback) {
         var line;
-        for (var col = this.center.col - 1; col <= this.center.col + 1; col++) {
+        for (var col = this.center.column - 1; col <= this.center.column + 1; col++) {
             for (line = this.center.line - 2; line <= this.center.line + 2; line++) {
                 callback(col, line);
             }
         }
         for (line = this.center.line - 1; line <= this.center.line + 1; line++) {
-            callback(this.center.col + 2, line);
+            callback(this.center.column + 2, line);
         }
-        callback(this.center.col - 2, this.center.line);
+        callback(this.center.column - 2, this.center.line);
     };
 
     Catan.Map.prototype.eachCoast = function (callback) {
-        for (var col = this.center.col - 1; col <= this.center.col + 2; col++) {
+        for (var col = this.center.column - 1; col <= this.center.column + 2; col++) {
             callback(col, this.center.line - 3);
         }
-        var orderedCoords = [
-            [this.center.col + 2, this.center.line - 2],
-            [this.center.col + 3, this.center.line - 1],
-            [this.center.col + 3, this.center.line],
-            [this.center.col + 3, this.center.line + 1],
-            [this.center.col + 2, this.center.line + 2]
+        var orderedCoordinates = [
+            [this.center.column + 2, this.center.line - 2],
+            [this.center.column + 3, this.center.line - 1],
+            [this.center.column + 3, this.center.line],
+            [this.center.column + 3, this.center.line + 1],
+            [this.center.column + 2, this.center.line + 2]
         ];
-        for (var i = 0; i < orderedCoords.length; i++) {
-            callback(orderedCoords[i][0], orderedCoords[i][1]);
+        for (var i = 0; i < orderedCoordinates.length; i++) {
+            callback(orderedCoordinates[i][0], orderedCoordinates[i][1]);
         }
-        for (col = this.center.col + 2; col >= this.center.col - 1; col--) {
+        for (col = this.center.column + 2; col >= this.center.column - 1; col--) {
             callback(col, this.center.line + 3);
         }
-        var orderedCoordinates = [
-            [this.center.col - 2, this.center.line + 2],
-            [this.center.col - 2, this.center.line + 1],
-            [this.center.col - 3, this.center.line],
-            [this.center.col - 2, this.center.line - 1],
-            [this.center.col - 2, this.center.line - 2]
+
+        orderedCoordinates = [
+            [this.center.column - 2, this.center.line + 2],
+            [this.center.column - 2, this.center.line + 1],
+            [this.center.column - 3, this.center.line],
+            [this.center.column - 2, this.center.line - 1],
+            [this.center.column - 2, this.center.line - 2]
         ];
         for (i = 0; i < orderedCoordinates.length; i++) {
             callback(orderedCoordinates[i][0], orderedCoordinates[i][1]);
         }
     };
 
-    Catan.Map.prototype.get = function (i, j) {
-        if (this.board[i] === undefined) {
+    Catan.Map.prototype.get = function (column, line) {
+        if (this.board[column] === undefined) {
             return undefined;
         }
-        return this.board[i][j];
+        return this.board[column][line];
     };
 
     Catan.Map.prototype.eachNeighbour = function (col, line, callback) {
-        var orderedNeighbours =
+        var orderedNeighbourCoordinates =
                 (0 === line % 2) ?
                     [
                         [col - 1, line - 1],
@@ -83,10 +84,10 @@
                 ]
             ;
         var neighbour;
-        for (var i = 0; i < orderedNeighbours.length; i++) {
-            neighbour = this.get(orderedNeighbours[i][0], orderedNeighbours[i][1]);
+        for (var i = 0; i < orderedNeighbourCoordinates.length; i++) {
+            neighbour = this.get(orderedNeighbourCoordinates[i][0], orderedNeighbourCoordinates[i][1]);
             if (neighbour !== undefined) {
-                callback(neighbour.x, neighbour.y);
+                callback(neighbour.position.column, neighbour.position.line);
             }
         }
     };
@@ -161,7 +162,7 @@
                 b = map.get(bx, by);
                 terrains.push(a.terrain);
                 a.terrain = undefined;
-                emptySpots.push({"x": a.x, "y": a.y});
+                emptySpots.push(a.position);
             });
         });
 
@@ -171,10 +172,10 @@
         Catan.Tools.shuffle(terrains);
 
         for (var i = 0; i < emptySpots.length; ++i) {
-            allowedTerrains = this.getAllowedTerrains(emptySpots[i].x, emptySpots[i].y, terrains);
+            allowedTerrains = this.getAllowedTerrains(emptySpots[i].column, emptySpots[i].line, terrains);
 
             if (allowedTerrains.length > 0) {
-                this.get(emptySpots[i].x, emptySpots[i].y).terrain = allowedTerrains[0];
+                this.get(emptySpots[i].column, emptySpots[i].line).terrain = allowedTerrains[0];
                 terrains = Catan.Tools.removeOne(terrains, allowedTerrains[0]);
             } else {
                 newEmptySpots.push(emptySpots[i]);
@@ -183,6 +184,7 @@
         emptySpots = newEmptySpots;
 
         // swap as much as possible
+        var allTerrains;
         var swapped = false;
         var eachSwapFunction = function (i, j) {
             if (!swapped && !(i == ex && j == ey) && Catan.Tools.contains(allowedTerrains, map.get(i, j).terrain)) {
@@ -203,9 +205,9 @@
         };
 
         for (var cur = 0; cur < emptySpots.length; ++cur) {
-            var ex = emptySpots[cur].x;
-            var ey = emptySpots[cur].y;
-            var allTerrains = [Catan.T.Hills, Catan.T.Pasture, Catan.T.Mountains, Catan.T.Fields, Catan.T.Forest, Catan.T.Desert];
+            var ex = emptySpots[cur].column;
+            var ey = emptySpots[cur].line;
+            allTerrains = [Catan.T.Hills, Catan.T.Pasture, Catan.T.Mountains, Catan.T.Fields, Catan.T.Forest, Catan.T.Desert];
             allowedTerrains = this.getAllowedTerrains(ex, ey, allTerrains);
             // if smth is allowed
             if (allowedTerrains.length > 0) {
@@ -319,7 +321,7 @@
         // do swap if > limit
         var coordinates = [];
         var eachPushCoordinatesFunction = function (i, j) {
-            coordinates.push({x: i, y: j});
+            coordinates.push(new Catan.Position(i, j));
         };
         var isCoupleValidFunction = function (a, b) {
             return (a.terrain != Catan.T.Empty && b.terrain != Catan.T.Empty && a.number !== undefined && b.number !== undefined);
@@ -357,8 +359,8 @@
             Catan.Tools.shuffle(coordinates);
 
             for (var c = 0; c < coordinates.length; ++c) {
-                i = coordinates[c].x;
-                j = coordinates[c].y;
+                i = coordinates[c].column;
+                j = coordinates[c].line;
                 var current = map.get(i, j);
                 var a, b;
                 var trioLimit = tileTrioScoreLimit;
@@ -407,7 +409,7 @@
                 map.get(i, j).circle = harbors.pop();
 
                 if (map.get(i, j).circle != Catan.T.Empty) {
-                    harborCoords.push({"x": i, "y": j});
+                    harborCoords.push(new Catan.Position(i, j));
                 }
             }
         });
@@ -427,18 +429,18 @@
             swapped = false;
             Catan.Tools.shuffle(harborCoords);
             for (var h = 0; h < harborCoords.length; h++) {
-                var currentHarbor = map.get(harborCoords[h].x, harborCoords[h].y);
+                var currentHarbor = map.get(harborCoords[h].column, harborCoords[h].line);
                 var allowedTerrains = terrains;
-                allowedTerrains = this.getAllowedTerrains(harborCoords[h].x, harborCoords[h].y, allowedTerrains);
+                allowedTerrains = this.getAllowedTerrains(harborCoords[h].column, harborCoords[h].line, allowedTerrains);
 
                 if (!Catan.Tools.contains(allowedTerrains, currentHarbor.circle)) {
                     // find a place to go
                     for (var hh = 0; hh < harborCoords.length; hh++) {
                         allowedTerrains = terrains;
-                        allowedTerrains = this.getAllowedTerrains(harborCoords[hh].x, harborCoords[hh].y, allowedTerrains);
+                        allowedTerrains = this.getAllowedTerrains(harborCoords[hh].column, harborCoords[hh].line, allowedTerrains);
                         if (Catan.Tools.contains(allowedTerrains, currentHarbor.circle)) {
                             // do swap
-                            var swapHarbor = map.get(harborCoords[hh].x, harborCoords[hh].y);
+                            var swapHarbor = map.get(harborCoords[hh].column, harborCoords[hh].line);
                             var cTmp = swapHarbor.circle;
                             swapHarbor.circle = currentHarbor.circle;
                             currentHarbor.circle = cTmp;
