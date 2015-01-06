@@ -101,7 +101,7 @@
             // draw coordinates
             ctx.fillStyle = "rgb(0, 0, 0)";
             ctx.font = "8pt Arial";
-            ctx.fillText("[" + x + "," + y + "]", cx - width / 4 + 1, cy - 5);
+            ctx.fillText("[" + hexagon.position.column + "," + hexagon.position.line + "]", cx - width / 4 + 1, cy - 5);
             if (hexagon.number !== undefined) {
                 ctx.font = "12pt Arial";
                 ctx.fillText(hexagon.number + "|" + Catan.Tools.tdsc(hexagon.number), cx - width / 4, cy + 10);

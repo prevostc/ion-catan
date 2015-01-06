@@ -22,9 +22,7 @@ Catan = (function () {
     Catan.generateMap = function (canvas, tileTrioScoreLimit) {
         tileTrioScoreLimit = tileTrioScoreLimit || 12;
 
-        var terrains;
-        var res;
-        var map;
+        var terrains, res, map;
 
         do {
             map = new Catan.Map(7, 7, new Catan.Position(3, 3));
