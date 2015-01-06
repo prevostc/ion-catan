@@ -1,5 +1,5 @@
 (function(Catan){
-
+    "use strict";
 
     Catan.Map = function (height, width, center) {
         this.board = [];

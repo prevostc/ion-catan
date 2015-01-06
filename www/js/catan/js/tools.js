@@ -1,4 +1,5 @@
 (function(Catan){
+    "use strict";
 
     Catan.Tools = {};
 
