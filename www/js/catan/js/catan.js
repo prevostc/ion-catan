@@ -84,6 +84,7 @@ Catan = (function () {
         ctx.fill();
 
         var fillCircle = function (cx, cy, r, c) {
+            ctx.lineWidth = 2;
             ctx.fillStyle = c;
             ctx.beginPath();
             ctx.arc(cx, cy, r, 0, Math.PI * 2, true);
@@ -92,7 +93,7 @@ Catan = (function () {
         };
 
         if (this.terrain == Catan.T.Harbor) {
-            fillCircle(cx, cy, 9, getColorFromTerrain(this.circle));
+            fillCircle(cx, cy, 11, getColorFromTerrain(this.circle));
             ctx.stroke();
         }
 
@@ -112,19 +113,23 @@ Catan = (function () {
                 fillCircle(cx, cy, Math.min(width, height) / 3, "rgb(255, 255, 255)");
 
                 // write number
+                var deltaY = 0;
                 if (Catan.Tools.tdsc(this.number) < 3) {
                     ctx.fillStyle = "rgb(0, 0, 0)";
-                    ctx.font = "10pt Arial";
+                    ctx.font = "8pt Arial";
+                    deltaY = 5;
                 } else if (Catan.Tools.tdsc(this.number) < 5) {
                     ctx.fillStyle = "rgb(0, 0, 0)";
                     ctx.font = "12pt Arial";
+                    deltaY = 6;
                 } else {
                     ctx.fillStyle = "rgb(245, 24, 24)";
                     ctx.font = "bold 12pt Arial";
+                    deltaY = 6;
                 }
                 var txtMetrics = ctx.measureText(this.number);
                 var txtWidth = txtMetrics.width;
-                ctx.fillText(this.number, cx - txtWidth / 2, cy + 6);
+                ctx.fillText(this.number, cx - txtWidth / 2, cy + deltaY);
                 ctx.stroke();
             }
         }
@@ -255,6 +260,7 @@ Catan = (function () {
 
     Catan.Map.prototype.draw = function (canvas) {
         var ctx = canvas.getContext('2d');
+
         // align numbers
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
