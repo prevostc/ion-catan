@@ -119,36 +119,6 @@
 
     };
 
-
-    Catan.Map.prototype.draw = function (canvas) {
-        var ctx = canvas.getContext('2d');
-
-        // align numbers
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        var screenW = canvas.width;
-        var size = {
-            width: screenW / 9,
-            height: screenW / 9 + screenW / 90,
-            canvasWidth: canvas.width,
-            canvasHeight: canvas.height
-        };
-        var dist = 2;
-
-        // reset canvas
-        //noinspection SillyAssignmentJS
-        canvas.width = canvas.width;
-
-        for (var i = 0; i < this.board.length; i++) {
-            for (var j = 0; j < this.board[i].length; j++) {
-                if (this.get(i, j).terrain != Catan.T.Empty) {
-                    this.get(i, j).draw(ctx, size, dist);
-                }
-            }
-        }
-    };
-
-
     Catan.Map.prototype.getAllowedTerrains = function (i, j, allowedTerrains) {
         var map = this;
         this.eachNeighbour(i, j, function (x, y) {

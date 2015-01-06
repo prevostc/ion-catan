@@ -38,7 +38,7 @@ Catan = (function () {
 
         map.generateHarbors();
 
-        map.draw(canvas);
+        Catan.UI.drawMap(map, canvas);
         return map;
     };
 
