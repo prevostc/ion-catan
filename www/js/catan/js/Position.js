@@ -6,7 +6,7 @@
         this.line = line;
 
         // Make the position immutable
-        Object.freeze(this);
+        //Object.freeze(this);
     };
 
 })(Catan);
