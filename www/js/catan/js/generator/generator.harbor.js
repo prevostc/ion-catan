@@ -92,8 +92,9 @@
         Catan.Tools.shuffle(coastBarsOrderedClockwiseType2);
 
         var coastLandTypesOrderedClockwise = [];
+        var randomCoastBarType = Math.round(Math.random() * 100);
         for (var i = 0 ; i < 6 ; i++) {
-            var harborBars = i % 2 ? coastBarsOrderedClockwiseType1 : coastBarsOrderedClockwiseType2;
+            var harborBars = (i + randomCoastBarType) % 2 ? coastBarsOrderedClockwiseType1 : coastBarsOrderedClockwiseType2;
             var harborBar = harborBars.pop();
             coastLandTypesOrderedClockwise.push(harborBar.pop());
             coastLandTypesOrderedClockwise.push(harborBar.pop());
