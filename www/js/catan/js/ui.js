@@ -24,7 +24,7 @@
 
         for (var i = 0; i < map.board.length; i++) {
             for (var j = 0; j < map.board[i].length; j++) {
-                if (map.get(i, j).terrain != Catan.T.Empty) {
+                if (map.get(i, j).land != Catan.T.Empty) {
                     Catan.UI.drawHexagon(map.get(i, j), ctx, size, dist);
                 }
             }
@@ -33,9 +33,9 @@
 
     Catan.UI.drawHexagon = function (hexagon, ctx, size, dist) {
 
-        var getColorFromTerrain = function (terrain) {
+        var getColorFromTerrain = function (land) {
             var color;
-            switch (terrain) {
+            switch (land) {
                 case Catan.T.Hills:
                     color = "rgb(224, 129, 27)";
                     break;
@@ -72,7 +72,7 @@
             cx = hexagon.position.column * (width + dist) - ((hexagon.position.line + 1) % 2) * (width + dist) / 2 + width/2 + size.canvasWidth/2 - mapWidth/2,
             cy = hexagon.position.line * (3 / 4 * height + dist) + height/2 + size.canvasHeight/2 - mapHeight/2;
 
-        ctx.fillStyle = getColorFromTerrain(hexagon.terrain);
+        ctx.fillStyle = getColorFromTerrain(hexagon.land);
         ctx.beginPath();
         ctx.moveTo(cx, cy - height / 2);
         ctx.lineTo(cx + width / 2, cy - height / 4);
@@ -92,7 +92,7 @@
             ctx.fill();
         };
 
-        if (hexagon.terrain == Catan.T.Harbor) {
+        if (hexagon.land == Catan.T.Harbor) {
             fillCircle(cx, cy, 11, getColorFromTerrain(hexagon.circle));
             ctx.stroke();
         }

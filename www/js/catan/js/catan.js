@@ -22,13 +22,13 @@ Catan = (function () {
     Catan.generateMap = function (canvas, tileTrioScoreLimit) {
         tileTrioScoreLimit = tileTrioScoreLimit || 12;
 
-        var terrains, res, map;
+        var lands, res, map;
 
         do {
             map = new Catan.Map(7, 7, new Catan.Position(3, 3));
             do {
-                terrains = map.generateTerrains();
-            } while (terrains.length > 0);
+                lands = map.generateTerrains();
+            } while (lands.length > 0);
 
             res = map.generateNumbers(tileTrioScoreLimit);
         } while (!res);
