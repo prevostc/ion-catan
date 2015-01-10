@@ -5,19 +5,44 @@ angular.module('starter.controllers', [])
         var canvas = document.querySelector('.canvas');
         canvas.width = document.querySelector('.canvas-container').offsetWidth;
         canvas.height = document.querySelector('.canvas-container').offsetHeight;
-        var map = Catan.Generator.Map.generate(Settings.getTileTrioScoreLimit());
+        var map = Catan.Generator.Map.generate(Settings.getTileTrioScoreLimit(), Settings.getHarborGenerationStrategy());
         Catan.UI.drawMap(map, canvas);
     };
 })
 
 .controller('SettingsCtrl', function($scope, Settings) {
-    $scope.tileTrioScoreLimitElements = [
-        {value: 11, title: 'High (slower)'},
-        {value: 12, title: 'Normal'},
-        {value: 13, title: 'Low (faster)'}
+    $scope.tileTrioScoreLimitOptions = [
+        {id: 11, label: 'High (slower)'},
+        {id: 12, label: 'Normal'},
+        {id: 13, label: 'Low (faster)'}
     ];
-    $scope.selectedItem = Settings.setTileTrioScoreLimit() || $scope.tileTrioScoreLimitElements[1];
+    var selectedTileTrioScoreLimitValue = Settings.getTileTrioScoreLimit();
+    $scope.selectedTileTrioScoreLimit = null;
+    for (var i = 0 ; i < $scope.tileTrioScoreLimitOptions.length ; i++) {
+        if ($scope.tileTrioScoreLimitOptions[i].id === selectedTileTrioScoreLimitValue) {
+            $scope.selectedTileTrioScoreLimit = $scope.tileTrioScoreLimitOptions[i];
+        }
+    }
     $scope.updateTileTrioScoreLimit = function() {
-        Settings.setTileTrioScoreLimit(this.selectedItem.value);
+        Settings.setTileTrioScoreLimit(this.selectedTileTrioScoreLimit.id);
     };
+    console.log($scope.selectedTileTrioScoreLimit);
+
+
+
+    $scope.harborGenerationStrategyOptions = [
+        {id: 'separate-tiles', label: 'Separate Tiles'},
+        {id: 'coast-bars', label: 'Coast Bars'}
+    ];
+    var selectedHarborGenerationStrategyValue = Settings.getHarborGenerationStrategy();
+    $scope.selectedHarborGenerationStrategy = null;
+    for (i = 0 ; i < $scope.harborGenerationStrategyOptions.length ; i++) {
+        if ($scope.harborGenerationStrategyOptions[i].id === selectedHarborGenerationStrategyValue) {
+            $scope.selectedHarborGenerationStrategy = $scope.harborGenerationStrategyOptions[i];
+        }
+    }
+    $scope.updateHarborGenerationStrategy = function() {
+        Settings.setHarborGenerationStrategy(this.selectedHarborGenerationStrategy.id);
+    };
+    console.log($scope.selectedHarborGenerationStrategy);
 });

@@ -5,8 +5,19 @@
                 <div class="input-label">
                     Map Fairness Level
                 </div>
-                <select ng-model="selectedItem" ng-change="updateTileTrioScoreLimit()" ng-options="element.title for element in tileTrioScoreLimitElements">
+                <select ng-model="selectedTileTrioScoreLimit"
+                        ng-change="updateTileTrioScoreLimit()"
+                        ng-options="option as option.label for option in tileTrioScoreLimitOptions">
 
+                </select>
+            </label>
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    Harbor Generation Strategy
+                </div>
+                <select ng-model="selectedHarborGenerationStrategy"
+                        ng-change="updateHarborGenerationStrategy()"
+                        ng-options="option as option.label for option in harborGenerationStrategyOptions">
                 </select>
             </label>
         </ion-list>

@@ -7,6 +7,13 @@ angular.module('starter.services', ['LocalStorageModule'])
             },
             setTileTrioScoreLimit: function (tileTrioScoreLimit) {
                 localStorageService.set('tileTrioScoreLimit', tileTrioScoreLimit);
+            },
+
+            getHarborGenerationStrategy: function () {
+                return localStorageService.get('harborGenerationStrategy') || 12;
+            },
+            setHarborGenerationStrategy: function (harborGenerationStrategy) {
+                localStorageService.set('harborGenerationStrategy', harborGenerationStrategy);
             }
         };
     });

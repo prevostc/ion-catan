@@ -4,7 +4,7 @@
 
     Catan.Generator.Map = {};
 
-    Catan.Generator.Map.generate = function (tileTrioScoreLimit) {
+    Catan.Generator.Map.generate = function (tileTrioScoreLimit, harborGenerationStrategyName) {
         tileTrioScoreLimit = tileTrioScoreLimit || 12;
 
         var lands, res, map;
@@ -18,8 +18,11 @@
             res = Catan.Generator.Number.generate(map, tileTrioScoreLimit);
         } while (!res);
 
-        Catan.Generator.Harbor.generateCoastBars(map);
-
+        if (harborGenerationStrategyName === 'coast-bars') {
+            Catan.Generator.Harbor.generateCoastBars(map);
+        } else {
+            Catan.Generator.Harbor.generate(map);
+        }
         return map;
     };
 
