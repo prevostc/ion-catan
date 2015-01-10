@@ -1,7 +1,10 @@
 (function(Catan){
     "use strict";
 
-    Catan.UI = {};
+    Catan.UI = {
+        // if set to true, displays the coordinates system
+        debug: false
+    };
 
     Catan.UI.drawMap = function (map, canvas) {
         var ctx = canvas.getContext('2d');
@@ -24,9 +27,7 @@
 
         for (var i = 0; i < map.board.length; i++) {
             for (var j = 0; j < map.board[i].length; j++) {
-                if (map.get(i, j).land != Catan.T.Empty) {
-                    Catan.UI.drawHexagon(map.get(i, j), ctx, size, dist);
-                }
+                Catan.UI.drawHexagon(map.get(i, j), ctx, size, dist);
             }
         }
     };
@@ -54,13 +55,37 @@
                 case Catan.T.Desert:
                     color = "rgb(255, 255, 117)";
                     break;
-                case Catan.T.Harbor:
-                case Catan.T.Ocean:
-                    color = "rgb(69, 91, 217)";
+                case Catan.T.Empty:
+                    color = "rgb(255, 255, 255)";
+                    break;
+                default:
+                    console.log("Can't find color for non-coast with this land type", land);
+            }
+            return color;
+        };
+        var getColorFromCoast = function (land) {
+            var color;
+            switch (land) {
+                case Catan.T.Hills:
+                    color = "rgb(224, 129, 27)";
+                    break;
+                case Catan.T.Pasture:
+                    color = "rgb(43, 224, 27)";
+                    break;
+                case Catan.T.Mountains:
+                    color = "rgb(145, 145, 145)";
+                    break;
+                case Catan.T.Fields:
+                    color = "rgb(229, 255, 0)";
+                    break;
+                case Catan.T.Forest:
+                    color = "rgb(8, 150, 34)";
                     break;
                 case Catan.T.Empty:
                     color = "rgb(255, 255, 255)";
                     break;
+                default:
+                    console.log("Can't find color for coast with this land type", land);
             }
             return color;
         };
@@ -72,7 +97,7 @@
             cx = hexagon.position.column * (width + dist) - ((hexagon.position.line + 1) % 2) * (width + dist) / 2 + width/2 + size.canvasWidth/2 - mapWidth/2,
             cy = hexagon.position.line * (3 / 4 * height + dist) + height/2 + size.canvasHeight/2 - mapHeight/2;
 
-        ctx.fillStyle = getColorFromLand(hexagon.land);
+        ctx.fillStyle = hexagon.isCoast() ? "rgb(69, 91, 217)" : getColorFromLand(hexagon.land);
         ctx.beginPath();
         ctx.moveTo(cx, cy - height / 2);
         ctx.lineTo(cx + width / 2, cy - height / 4);
@@ -92,12 +117,12 @@
             ctx.fill();
         };
 
-        if (hexagon.land == Catan.T.Harbor) {
-            fillCircle(cx, cy, 11, getColorFromLand(hexagon.circle));
+        if (hexagon.isHarbor()) {
+            fillCircle(cx, cy, 11, getColorFromCoast(hexagon.land));
             ctx.stroke();
         }
 
-        if (Catan.debug) {
+        if (Catan.UI.debug) {
             // draw coordinates
             ctx.fillStyle = "rgb(0, 0, 0)";
             ctx.font = "8pt Arial";

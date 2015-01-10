@@ -38,11 +38,11 @@
     };
     Catan.Hexagon.Coast.prototype = new Catan.Hexagon();
 
-    Catan.Hexagon.prototype.isCoast = function () {
+    Catan.Hexagon.Coast.prototype.isCoast = function () {
         return true;
     };
     Catan.Hexagon.Coast.prototype.isHarbor = function () {
-        return this.land !== Catan.T.Empty;
+        return this.land !== Catan.T.Ocean;
     };
 
 })(Catan);

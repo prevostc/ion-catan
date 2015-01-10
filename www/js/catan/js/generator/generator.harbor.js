@@ -29,10 +29,9 @@
             if (n++ % 2 != mod) {
                 map.get(i, j).land = Catan.T.Ocean;
             } else {
-                map.get(i, j).land = Catan.T.Harbor;
-                map.get(i, j).circle = harbors.pop();
+                map.get(i, j).land = harbors.pop();
 
-                if (map.get(i, j).circle != Catan.T.Empty) {
+                if (map.get(i, j).land != Catan.T.Empty) {
                     harborCoords.push(new Catan.Position(i, j));
                 }
             }
@@ -57,17 +56,17 @@
                 var allowedLands = lands;
                 allowedLands = map.getAllowedLands(harborCoords[h].column, harborCoords[h].line, allowedLands);
 
-                if (!Catan.Tools.contains(allowedLands, currentHarbor.circle)) {
+                if (!Catan.Tools.contains(allowedLands, currentHarbor.land)) {
                     // find a place to go
                     for (var hh = 0; hh < harborCoords.length; hh++) {
                         allowedLands = lands;
                         allowedLands = map.getAllowedLands(harborCoords[hh].column, harborCoords[hh].line, allowedLands);
-                        if (Catan.Tools.contains(allowedLands, currentHarbor.circle)) {
+                        if (Catan.Tools.contains(allowedLands, currentHarbor.land)) {
                             // do swap
                             var swapHarbor = map.get(harborCoords[hh].column, harborCoords[hh].line);
-                            var cTmp = swapHarbor.circle;
-                            swapHarbor.circle = currentHarbor.circle;
-                            currentHarbor.circle = cTmp;
+                            var cTmp = swapHarbor.land;
+                            swapHarbor.land = currentHarbor.land;
+                            currentHarbor.land = cTmp;
                             swapped = true;
                         }
                     }

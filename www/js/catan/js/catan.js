@@ -3,8 +3,6 @@ Catan = (function () {
     "use strict";
 
     var Catan = {
-        debug: false,
-
         T: {
             Hills: 1,
             Pasture: 2,
@@ -13,8 +11,7 @@ Catan = (function () {
             Forest: 5,
             Desert: 6,
             Ocean: 7,
-            Harbor: 8,
-            Empty: 9
+            Empty: 8
         }
     };
 
