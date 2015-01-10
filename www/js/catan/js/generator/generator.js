@@ -18,7 +18,7 @@
             res = Catan.Generator.Number.generate(map, tileTrioScoreLimit);
         } while (!res);
 
-        Catan.Generator.Harbor.generate(map);
+        Catan.Generator.Harbor.generateCoastBars(map);
 
         return map;
     };

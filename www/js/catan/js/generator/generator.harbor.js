@@ -74,4 +74,35 @@
             }
         }
     };
+
+
+    Catan.Generator.Harbor.generateCoastBars = function (map) {
+        var coastBarsOrderedClockwiseType1 = [
+            [Catan.T.Empty, Catan.T.Ocean, Catan.T.Hills],
+            [Catan.T.Empty, Catan.T.Ocean, Catan.T.Pasture],
+            [Catan.T.Empty, Catan.T.Ocean, Catan.T.Fields]
+        ];
+        var coastBarsOrderedClockwiseType2 = [
+            [Catan.T.Ocean, Catan.T.Empty, Catan.T.Ocean],
+            [Catan.T.Ocean, Catan.T.Forest, Catan.T.Ocean],
+            [Catan.T.Ocean, Catan.T.Mountains, Catan.T.Ocean]
+        ];
+
+        Catan.Tools.shuffle(coastBarsOrderedClockwiseType1);
+        Catan.Tools.shuffle(coastBarsOrderedClockwiseType2);
+
+        var coastLandTypesOrderedClockwise = [];
+        for (var i = 0 ; i < 6 ; i++) {
+            var harborBars = i % 2 ? coastBarsOrderedClockwiseType1 : coastBarsOrderedClockwiseType2;
+            var harborBar = harborBars.pop();
+            coastLandTypesOrderedClockwise.push(harborBar.pop());
+            coastLandTypesOrderedClockwise.push(harborBar.pop());
+            coastLandTypesOrderedClockwise.push(harborBar.pop());
+        }
+
+        map.eachCoast(function (column, line) {
+            var harbor = map.get(column, line);
+            harbor.land = coastLandTypesOrderedClockwise.pop();
+        });
+    };
 })(Catan);
