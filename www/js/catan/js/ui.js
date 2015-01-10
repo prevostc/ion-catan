@@ -1,3 +1,4 @@
+//noinspection JSHint
 (function(Catan){
     "use strict";
 

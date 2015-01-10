@@ -1,3 +1,4 @@
+//noinspection JSHint
 (function(Catan){
     "use strict";
 
@@ -16,8 +17,10 @@
     Catan.Tools.removeOne = function (a, o) {
         var removed = false;
         return a.filter(function (element, index, array) {
-            if (removed) return true;
-            if (element == o) {
+            if (removed) {
+                return true;
+            }
+            if (element === o) {
                 removed = true;
                 return false;
             }
@@ -41,13 +44,17 @@
         return sum;
     };
 
-    Catan.Tools.rotate = function (a, inc) {
+    Catan.Tools.rotate = function (a, inc)
+    {
         var l = a.length, i, x;
         inc = Math.abs(inc) >= l && (inc %= l) ||
             inc < 0 && (inc += l) ||
             inc;
-        for (; inc; inc = (Math.ceil(l / inc) - 1) * inc - l + (l = inc))
-            for (i = l; i > inc; x = a[--i], a[i] = a[i - inc], a[i - inc] = x);
+        for (; inc; inc = (Math.ceil(l / inc) - 1) * inc - l + (l = inc)) {
+            for (i = l; i > inc; x = a[--i], a[i] = a[i - inc], a[i - inc] = x) {
+                // nothing
+            }
+        }
     };
 
     // the number of two dice combination with a sum equal to this number

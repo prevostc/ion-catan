@@ -1,3 +1,4 @@
+//noinspection JSHint
 (function(Catan){
     "use strict";
 
@@ -148,7 +149,7 @@
         this.eachNeighbour(i, j, function (x, y) {
             // remove neighbours lands from allowed lands
             allowedLands = allowedLands.filter(function (element, index, array) {
-                return (map.get(x, y).land != element);
+                return (map.get(x, y).land !== element);
             });
         });
         return allowedLands;

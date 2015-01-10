@@ -1,4 +1,8 @@
-angular.module('starter.services', ['LocalStorageModule'])
+//noinspection JSHint
+(function (angular) {
+    "use strict";
+
+    angular.module('starter.services', ['LocalStorageModule'])
 
     .factory('Settings', function (localStorageService) {
         return {
@@ -17,3 +21,5 @@ angular.module('starter.services', ['LocalStorageModule'])
             }
         };
     });
+
+})(angular);

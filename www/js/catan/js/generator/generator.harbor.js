@@ -1,4 +1,6 @@
+//noinspection JSHint
 (function(Catan) {
+    "use strict";
 
     Catan.Generator.Harbor = {};
 
@@ -25,15 +27,15 @@
 
         // put harbors on map and index
         map.eachCoast(function (i, j) {
-            // set oceans and harboors
-            if (n++ % 2 != mod) {
-                map.get(i, j).land = Catan.T.Ocean;
-            } else {
+            // set oceans and harbors
+            if (n++ % 2 === mod) {
                 map.get(i, j).land = harbors.pop();
 
-                if (map.get(i, j).land != Catan.T.Empty) {
+                if (map.get(i, j).land !== Catan.T.Empty) {
                     harborCoords.push(new Catan.Position(i, j));
                 }
+            } else {
+                map.get(i, j).land = Catan.T.Ocean;
             }
         });
 

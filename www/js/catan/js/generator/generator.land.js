@@ -1,4 +1,6 @@
+//noinspection JSHint
 (function(Catan) {
+    "use strict";
 
     Catan.Generator.Land = {};
 
@@ -25,7 +27,7 @@
             var a;
             var b;
             map.eachConsecutiveNeighbour(i, j, function (a, b) {
-                return (a.land == b.land && a.land != Catan.T.Empty && a.land !== undefined);
+                return (a.land === b.land && a.land !== Catan.T.Empty && a.land !== undefined);
             }, function (ax, ay, bx, by) {
                 a = map.get(ax, ay);
                 b = map.get(bx, by);
@@ -56,10 +58,10 @@
         var allLands;
         var swapped = false;
         var eachSwapFunction = function (i, j) {
-            if (!swapped && !(i == ex && j == ey) && Catan.Tools.contains(allowedLands, map.get(i, j).land)) {
+            if (!swapped && !(i === ex && j === ey) && Catan.Tools.contains(allowedLands, map.get(i, j).land)) {
                 var currentAllowedLands = map.getAllowedLands(i, j, allLands);
                 for (var t = 0; t < lands.length && !swapped; t++) {
-                    if (map.get(i, j).land != lands[t] && Catan.Tools.contains(currentAllowedLands, lands[t])) {
+                    if (map.get(i, j).land !== lands[t] && Catan.Tools.contains(currentAllowedLands, lands[t])) {
                         // set empty spot land to current.land
                         map.get(ex, ey).land = map.get(i, j).land;
                         // set current land to land[t]

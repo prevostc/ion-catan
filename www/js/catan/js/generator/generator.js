@@ -1,4 +1,6 @@
+//noinspection JSHint
 (function(Catan) {
+    "use strict";
 
     Catan.Generator = {};
 

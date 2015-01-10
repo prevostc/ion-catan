@@ -1,4 +1,6 @@
+//noinspection JSHint
 (function(Catan) {
+    "use strict";
 
     Catan.Generator.Number = {};
 
@@ -29,7 +31,7 @@
             var lowest;
             for (j = 0; j < groupKeys.length; j++) {
                 // continue when size reached
-                if (groups[groupKeys[j]].numbers.length == groups[groupKeys[j]].size) {
+                if (groups[groupKeys[j]].numbers.length === groups[groupKeys[j]].size) {
                     continue;
                 }
                 // init lowest
@@ -49,7 +51,7 @@
         // and index lands groups
         map.each(function (i, j) {
             var current = map.get(i, j);
-            if (current.land != Catan.T.Desert) {
+            if (current.land !== Catan.T.Desert) {
                 current.number = groups[current.land].numbers.pop();
                 groups[current.land].pos.push({x: i, y: j});
             }
@@ -68,10 +70,6 @@
                     if (neighbour.number !== undefined && Catan.Tools.tdsc(neighbour.number) > max) {
                         max = neighbour.number;
                     }
-                    // can't swap with this neighbour
-                    if (maxNeighbourTdsc !== undefined && Catan.Tools.tdsc(neighbour.number) > maxNeighbourTdsc) {
-                        return;
-                    }
                 });
                 return max;
             };
@@ -85,6 +83,7 @@
                 if (Catan.Tools.tdsc(map.get(coord.x, coord.y).number) < maxTdsc) {
                     max = getMax(coord.x, coord.y);
                     if (max !== undefined) {
+                        //noinspection JSUnusedAssignment
                         if (min === undefined || max < min) {
                             min = max;
                             minCoord = coord;
@@ -107,7 +106,7 @@
             coordinates.push(new Catan.Position(i, j));
         };
         var isCoupleValidFunction = function (a, b) {
-            return (a.land != Catan.T.Empty && b.land != Catan.T.Empty && a.number !== undefined && b.number !== undefined);
+            return (a.land != Catan.T.Empty && b.land !== Catan.T.Empty && a.number !== undefined && b.number !== undefined);
         };
         var doSwapFunction = function (ax, ay, bx, by) {
             a = map.get(ax, ay);
