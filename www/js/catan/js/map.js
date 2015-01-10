@@ -2,14 +2,48 @@
     "use strict";
 
     Catan.Map = function (height, width, center) {
+        // @todo: dynamically process the coast coordinates based on map topology
+        this.coastOrderedCoordinates = [
+            [center.column - 1, center.line - 3],
+            [center.column,     center.line - 3],
+            [center.column + 1, center.line - 3],
+            [center.column + 2, center.line - 3],
+
+            [center.column + 2, center.line - 2],
+            [center.column + 3, center.line - 1],
+            [center.column + 3, center.line],
+            [center.column + 3, center.line + 1],
+            [center.column + 2, center.line + 2],
+
+            [center.column + 2, center.line + 3],
+            [center.column + 1, center.line + 3],
+            [center.column ,    center.line + 3],
+            [center.column - 1, center.line + 3],
+
+            [center.column - 2, center.line + 2],
+            [center.column - 2, center.line + 1],
+            [center.column - 3, center.line],
+            [center.column - 2, center.line - 1],
+            [center.column - 2, center.line - 2]
+        ];
+        // Make these coordinates immutable
+        Object.freeze(this.coastOrderedCoordinates);
+
         this.board = [];
         for (var i = 0; i < width; i++) {
             this.board[i] = [];
             for (var j = 0; j < height; j++) {
-                this.board[i][j] = new Catan.Hexagon(Catan.T.Empty, new Catan.Position(i, j));
+                var hexagon, land = Catan.T.Empty, position = new Catan.Position(i, j);
+                if (this.isCoastPosition(i, j)) {
+                    hexagon = new Catan.Hexagon.Coast(position, land);
+                } else  {
+                    hexagon = new Catan.Hexagon.Land(position, land);
+                }
+                this.board[i][j] = hexagon;
             }
         }
         this.center = center;
+
     };
 
 
@@ -26,35 +60,23 @@
         callback(this.center.column - 2, this.center.line);
     };
 
-    Catan.Map.prototype.eachCoast = function (callback) {
-        for (var col = this.center.column - 1; col <= this.center.column + 2; col++) {
-            callback(col, this.center.line - 3);
-        }
-        var orderedCoordinates = [
-            [this.center.column + 2, this.center.line - 2],
-            [this.center.column + 3, this.center.line - 1],
-            [this.center.column + 3, this.center.line],
-            [this.center.column + 3, this.center.line + 1],
-            [this.center.column + 2, this.center.line + 2]
-        ];
-        for (var i = 0; i < orderedCoordinates.length; i++) {
-            callback(orderedCoordinates[i][0], orderedCoordinates[i][1]);
-        }
-        for (col = this.center.column + 2; col >= this.center.column - 1; col--) {
-            callback(col, this.center.line + 3);
-        }
 
-        orderedCoordinates = [
-            [this.center.column - 2, this.center.line + 2],
-            [this.center.column - 2, this.center.line + 1],
-            [this.center.column - 3, this.center.line],
-            [this.center.column - 2, this.center.line - 1],
-            [this.center.column - 2, this.center.line - 2]
-        ];
-        for (i = 0; i < orderedCoordinates.length; i++) {
-            callback(orderedCoordinates[i][0], orderedCoordinates[i][1]);
+    Catan.Map.prototype.eachCoast = function (callback) {
+        for (var i = 0; i < this.coastOrderedCoordinates.length; i++) {
+            callback(this.coastOrderedCoordinates[i][0], this.coastOrderedCoordinates[i][1]);
         }
     };
+
+
+    Catan.Map.prototype.isCoastPosition = function (column, line) {
+        for (var i = 0; i < this.coastOrderedCoordinates.length; i++) {
+            if (this.coastOrderedCoordinates[i][0] === column && this.coastOrderedCoordinates[i][1] === line) {
+                return true;
+            }
+        }
+        return false;
+    };
+
 
     Catan.Map.prototype.get = function (column, line) {
         if (this.board[column] === undefined) {
@@ -62,6 +84,7 @@
         }
         return this.board[column][line];
     };
+
 
     Catan.Map.prototype.eachNeighbour = function (col, line, callback) {
         var orderedNeighbourCoordinates =
