@@ -25,6 +25,7 @@
         // reset canvas
         //noinspection SillyAssignmentJS
         canvas.width = canvas.width;
+        ctx.clearRect (0, 0, canvas.width, canvas.height);
 
         for (var i = 0; i < map.board.length; i++) {
             for (var j = 0; j < map.board[i].length; j++) {
