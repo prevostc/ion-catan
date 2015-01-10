@@ -5,7 +5,8 @@ angular.module('starter.controllers', [])
         var canvas = document.querySelector('.canvas');
         canvas.width = document.querySelector('.canvas-container').offsetWidth;
         canvas.height = document.querySelector('.canvas-container').offsetHeight;
-        Catan.generateMap(document.querySelector('.canvas'), Settings.getTileTrioScoreLimit());
+        var map = Catan.Generator.Map.generate(Settings.getTileTrioScoreLimit());
+        Catan.UI.drawMap(map, canvas);
     };
 })
 
