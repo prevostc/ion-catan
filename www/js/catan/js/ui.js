@@ -59,7 +59,7 @@
                     color = "rgb(255, 255, 255)";
                     break;
                 default:
-                    console.log("Can't find color for non-coast with this land type", land);
+                    throw "Can't find color for non-coast with this land type: '" + land + "'";
             }
             return color;
         };
@@ -85,7 +85,7 @@
                     color = "rgb(255, 255, 255)";
                     break;
                 default:
-                    console.log("Can't find color for coast with this land type", land);
+                    throw "Can't find color for coast with this land type: '" + land + "'";
             }
             return color;
         };

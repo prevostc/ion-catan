@@ -26,7 +26,6 @@ angular.module('starter.controllers', [])
     $scope.updateTileTrioScoreLimit = function() {
         Settings.setTileTrioScoreLimit(this.selectedTileTrioScoreLimit.id);
     };
-    console.log($scope.selectedTileTrioScoreLimit);
 
 
 
@@ -44,5 +43,4 @@ angular.module('starter.controllers', [])
     $scope.updateHarborGenerationStrategy = function() {
         Settings.setHarborGenerationStrategy(this.selectedHarborGenerationStrategy.id);
     };
-    console.log($scope.selectedHarborGenerationStrategy);
 });
