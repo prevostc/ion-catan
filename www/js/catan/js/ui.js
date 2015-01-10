@@ -33,7 +33,7 @@
 
     Catan.UI.drawHexagon = function (hexagon, ctx, size, dist) {
 
-        var getColorFromTerrain = function (land) {
+        var getColorFromLand = function (land) {
             var color;
             switch (land) {
                 case Catan.T.Hills:
@@ -72,7 +72,7 @@
             cx = hexagon.position.column * (width + dist) - ((hexagon.position.line + 1) % 2) * (width + dist) / 2 + width/2 + size.canvasWidth/2 - mapWidth/2,
             cy = hexagon.position.line * (3 / 4 * height + dist) + height/2 + size.canvasHeight/2 - mapHeight/2;
 
-        ctx.fillStyle = getColorFromTerrain(hexagon.land);
+        ctx.fillStyle = getColorFromLand(hexagon.land);
         ctx.beginPath();
         ctx.moveTo(cx, cy - height / 2);
         ctx.lineTo(cx + width / 2, cy - height / 4);
@@ -93,7 +93,7 @@
         };
 
         if (hexagon.land == Catan.T.Harbor) {
-            fillCircle(cx, cy, 11, getColorFromTerrain(hexagon.circle));
+            fillCircle(cx, cy, 11, getColorFromLand(hexagon.circle));
             ctx.stroke();
         }
 

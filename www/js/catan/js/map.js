@@ -120,20 +120,20 @@
 
     };
 
-    Catan.Map.prototype.getAllowedTerrains = function (i, j, allowedTerrains) {
+    Catan.Map.prototype.getAllowedLands = function (i, j, allowedLands) {
         var map = this;
         this.eachNeighbour(i, j, function (x, y) {
             // remove neighbours lands from allowed lands
-            allowedTerrains = allowedTerrains.filter(function (element, index, array) {
+            allowedLands = allowedLands.filter(function (element, index, array) {
                 return (map.get(x, y).land != element);
             });
         });
-        return allowedTerrains;
+        return allowedLands;
     };
 
 
-    Catan.Map.prototype.generateTerrains = function () {
-        var allowedTerrains;
+    Catan.Map.prototype.generateLands = function () {
+        var allowedLands;
         var map = this;
         // init map with random lands
         var lands = [
@@ -172,11 +172,11 @@
         Catan.Tools.shuffle(lands);
 
         for (var i = 0; i < emptySpots.length; ++i) {
-            allowedTerrains = this.getAllowedTerrains(emptySpots[i].column, emptySpots[i].line, lands);
+            allowedLands = this.getAllowedLands(emptySpots[i].column, emptySpots[i].line, lands);
 
-            if (allowedTerrains.length > 0) {
-                this.get(emptySpots[i].column, emptySpots[i].line).land = allowedTerrains[0];
-                lands = Catan.Tools.removeOne(lands, allowedTerrains[0]);
+            if (allowedLands.length > 0) {
+                this.get(emptySpots[i].column, emptySpots[i].line).land = allowedLands[0];
+                lands = Catan.Tools.removeOne(lands, allowedLands[0]);
             } else {
                 newEmptySpots.push(emptySpots[i]);
             }
@@ -184,13 +184,13 @@
         emptySpots = newEmptySpots;
 
         // swap as much as possible
-        var allTerrains;
+        var allLands;
         var swapped = false;
         var eachSwapFunction = function (i, j) {
-            if (!swapped && !(i == ex && j == ey) && Catan.Tools.contains(allowedTerrains, map.get(i, j).land)) {
-                var currentAllowedTerrains = map.getAllowedTerrains(i, j, allTerrains);
+            if (!swapped && !(i == ex && j == ey) && Catan.Tools.contains(allowedLands, map.get(i, j).land)) {
+                var currentAllowedLands = map.getAllowedLands(i, j, allLands);
                 for (var t = 0; t < lands.length && !swapped; t++) {
-                    if (map.get(i, j).land != lands[t] && Catan.Tools.contains(currentAllowedTerrains, lands[t])) {
+                    if (map.get(i, j).land != lands[t] && Catan.Tools.contains(currentAllowedLands, lands[t])) {
                         // set empty spot land to current.land
                         map.get(ex, ey).land = map.get(i, j).land;
                         // set current land to land[t]
@@ -207,10 +207,10 @@
         for (var cur = 0; cur < emptySpots.length; ++cur) {
             var ex = emptySpots[cur].column;
             var ey = emptySpots[cur].line;
-            allTerrains = [Catan.T.Hills, Catan.T.Pasture, Catan.T.Mountains, Catan.T.Fields, Catan.T.Forest, Catan.T.Desert];
-            allowedTerrains = this.getAllowedTerrains(ex, ey, allTerrains);
+            allLands = [Catan.T.Hills, Catan.T.Pasture, Catan.T.Mountains, Catan.T.Fields, Catan.T.Forest, Catan.T.Desert];
+            allowedLands = this.getAllowedLands(ex, ey, allLands);
             // if smth is allowed
-            if (allowedTerrains.length > 0) {
+            if (allowedLands.length > 0) {
                 swapped = false;
                 this.each(eachSwapFunction);
             }
@@ -430,15 +430,15 @@
             Catan.Tools.shuffle(harborCoords);
             for (var h = 0; h < harborCoords.length; h++) {
                 var currentHarbor = map.get(harborCoords[h].column, harborCoords[h].line);
-                var allowedTerrains = lands;
-                allowedTerrains = this.getAllowedTerrains(harborCoords[h].column, harborCoords[h].line, allowedTerrains);
+                var allowedLands = lands;
+                allowedLands = this.getAllowedLands(harborCoords[h].column, harborCoords[h].line, allowedLands);
 
-                if (!Catan.Tools.contains(allowedTerrains, currentHarbor.circle)) {
+                if (!Catan.Tools.contains(allowedLands, currentHarbor.circle)) {
                     // find a place to go
                     for (var hh = 0; hh < harborCoords.length; hh++) {
-                        allowedTerrains = lands;
-                        allowedTerrains = this.getAllowedTerrains(harborCoords[hh].column, harborCoords[hh].line, allowedTerrains);
-                        if (Catan.Tools.contains(allowedTerrains, currentHarbor.circle)) {
+                        allowedLands = lands;
+                        allowedLands = this.getAllowedLands(harborCoords[hh].column, harborCoords[hh].line, allowedLands);
+                        if (Catan.Tools.contains(allowedLands, currentHarbor.circle)) {
                             // do swap
                             var swapHarbor = map.get(harborCoords[hh].column, harborCoords[hh].line);
                             var cTmp = swapHarbor.circle;

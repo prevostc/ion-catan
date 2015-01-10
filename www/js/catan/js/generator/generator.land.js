@@ -1,25 +1,8 @@
-var Catan;
-Catan = (function () {
-    "use strict";
+(function(Catan) {
 
-    var Catan = {
-        debug: false,
+    Catan.Generator.Land = {};
 
-        T: {
-            Hills: 1,
-            Pasture: 2,
-            Mountains: 3,
-            Fields: 4,
-            Forest: 5,
-            Desert: 6,
-            Ocean: 7,
-            Harbor: 8,
-            Empty: 9
-        }
-    };
-
-
-    Catan.generateMap = function (canvas, tileTrioScoreLimit) {
+    Catan.Generator.Land.generate = function (canvas, tileTrioScoreLimit) {
         tileTrioScoreLimit = tileTrioScoreLimit || 12;
 
         var lands, res, map;
@@ -38,6 +21,4 @@ Catan = (function () {
         Catan.UI.drawMap(map, canvas);
         return map;
     };
-
-    return Catan;
-})();
+})(Catan);
