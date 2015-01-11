@@ -5,3 +5,7 @@ node_modules/
 platforms/
 plugins/
 .idea
+*.key
+*.keystore
+*.apk
+icon*x*.png
