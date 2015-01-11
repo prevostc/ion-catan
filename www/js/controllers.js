@@ -11,6 +11,10 @@
                 canvas.height = document.querySelector('.canvas-container').offsetHeight;
                 var map = Catan.Generator.Map.generate(Settings.getTileTrioScoreLimit(), Settings.getHarborGenerationStrategy());
                 Catan.UI.drawMap(map, canvas);
+                // @todo: find another fix.
+                // Sometimes, the canvas goes full black (on first launch mainly)
+                // prevent the canvas from remaining black by painting twice
+                Catan.UI.drawMap(map, canvas);
             };
         })
 
