@@ -14,7 +14,7 @@
             },
 
             getHarborGenerationStrategy: function () {
-                return localStorageService.get('harborGenerationStrategy') || 12;
+                return localStorageService.get('harborGenerationStrategy') || 'coast-bars';
             },
             setHarborGenerationStrategy: function (harborGenerationStrategy) {
                 localStorageService.set('harborGenerationStrategy', harborGenerationStrategy);

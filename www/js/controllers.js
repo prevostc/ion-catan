@@ -33,8 +33,8 @@
 
 
             $scope.harborGenerationStrategyOptions = [
-                {id: 'separate-tiles', label: 'Separate Tiles'},
-                {id: 'coast-bars', label: 'Coast Bars'}
+                {id: 'separate-tiles', label: 'Separate Tiles (18 tiles)'},
+                {id: 'coast-bars', label: 'Enclosing edges bars (6 long pieces)'}
             ];
             var selectedHarborGenerationStrategyValue = Settings.getHarborGenerationStrategy();
             $scope.selectedHarborGenerationStrategy = null;
