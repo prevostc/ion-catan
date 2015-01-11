@@ -7,7 +7,7 @@
     .factory('Settings', function (localStorageService) {
         return {
             getTileTrioScoreLimit: function () {
-                return localStorageService.get('tileTrioScoreLimit') || 12;
+                return localStorageService.get('tileTrioScoreLimit') || 13;
             },
             setTileTrioScoreLimit: function (tileTrioScoreLimit) {
                 localStorageService.set('tileTrioScoreLimit', tileTrioScoreLimit);
