@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.prevostc.catancompanion" version="1.0.0" xmlns="http://www.w3.org/ns/widgets"
+<widget id="com.prevostc.catansimplemapgenerator" version="1.0.1" xmlns="http://www.w3.org/ns/widgets"
         xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Catan Companion</name>
+    <name>Catan Simple Map Generator</name>
     <description>
         The catan bro to help you generate a map
     </description>

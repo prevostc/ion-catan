@@ -9,3 +9,4 @@ plugins/
 *.keystore
 *.apk
 icon*x*.png
+build_release.sh
