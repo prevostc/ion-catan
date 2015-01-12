@@ -1,5 +1,5 @@
 //noinspection JSHint
-(function(Catan){
+(function (Catan, PIXI) {
     "use strict";
 
     Catan.UI = {
@@ -7,7 +7,7 @@
         debug: false
     };
 
-    Catan.UI.drawMap = function (map, canvas) {
+    Catan.UI.drawMapBasic = function (map, canvas) {
         var ctx = canvas.getContext('2d');
 
         // align numbers
@@ -25,7 +25,7 @@
         // reset canvas
         //noinspection SillyAssignmentJS
         canvas.width = canvas.width;
-        ctx.clearRect (0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         for (var i = 0; i < map.board.length; i++) {
             for (var j = 0; j < map.board[i].length; j++) {
@@ -34,7 +34,7 @@
         }
     };
 
-    Catan.UI.drawHexagon = function (hexagon, ctx, size, dist) {
+    Catan.UI.drawHexagonBasic = function (hexagon, ctx, size, dist) {
 
         var getColorFromLand = function (land) {
             var color;
@@ -95,9 +95,9 @@
         var width = size.width,
             height = size.height,
             mapWidth = width * 7,
-            mapHeight = height * 7 - (1/4 * height * 6),
-            cx = hexagon.position.column * (width + dist) - ((hexagon.position.line + 1) % 2) * (width + dist) / 2 + width/2 + size.canvasWidth/2 - mapWidth/2,
-            cy = hexagon.position.line * (3 / 4 * height + dist) + height/2 + size.canvasHeight/2 - mapHeight/2;
+            mapHeight = height * 7 - (1 / 4 * height * 6),
+            cx = hexagon.position.column * (width + dist) - ((hexagon.position.line + 1) % 2) * (width + dist) / 2 + width / 2 + size.canvasWidth / 2 - mapWidth / 2,
+            cy = hexagon.position.line * (3 / 4 * height + dist) + height / 2 + size.canvasHeight / 2 - mapHeight / 2;
 
         ctx.fillStyle = hexagon.isCoast() ? "rgb(69, 91, 217)" : getColorFromLand(hexagon.land);
         ctx.beginPath();
@@ -162,4 +162,88 @@
         }
     };
 
-})(Catan);
+    Catan.UI.init = function(canvasContainerSelector, width, height) {
+        var canvasContainer = document.querySelector(canvasContainerSelector);
+
+        // You can use either PIXI.WebGLRenderer or PIXI.CanvasRenderer or PIXI.autoDetectRenderer
+        var renderer = new PIXI.CanvasRenderer(width, height);
+        canvasContainer.appendChild(renderer.view);
+        var stage = new PIXI.Stage(0xFFFFFF);
+        renderer.render(stage);
+
+
+        // create a new loader
+        var loader = new PIXI.AssetLoader([ "img/spritesheet.json"]);
+
+        //begin load
+        loader.load();
+
+        return renderer;
+    };
+
+    Catan.UI.draw = function (renderer, map, width, height) {
+        renderer.view.width = width;
+        renderer.view.height = height;
+
+        var stage = new PIXI.Stage(0xFFFFFF);
+
+        // holder to store aliens
+        var aliens = [];
+        var alienFrames = ["field.png", "desert.png", "forest.png", "ocean.png", "pasture.png", "hills.png", "mountain.png"];
+
+        var count = 0;
+
+        // create an empty container
+        var alienContainer = new PIXI.DisplayObjectContainer();
+        alienContainer.position.x = width/2;
+        alienContainer.position.y = height/2;
+
+        stage.addChild(alienContainer);
+        onAssetsLoaded();
+
+        function onAssetsLoaded()
+        {
+
+            // create a texture from an image path
+            // add a bunch of aliens
+            for (var i = 0; i < 20; i++)
+            {
+                // create an alien using the frame name..
+                var alien = PIXI.Sprite.fromFrame(alienFrames[i % 4]);
+
+                alien.position.x = Math.random() * 800 - 400;
+                alien.position.y = Math.random() * 600 - 300;
+                alien.anchor.x = 0.5;
+                alien.anchor.y = 0.5;
+                aliens.push(alien);
+                alienContainer.addChild(alien);
+            }
+
+            // start animating
+            window.requestAnimFrame( animate );
+
+
+        }
+
+        function animate() {
+
+            window.requestAnimFrame( animate );
+
+            // just for fun, lets rotate mr rabbit a little
+            for (var i = 0; i < 20; i++)
+            {
+                var alien = aliens[i];
+                alien.rotation += 0.1;
+            }
+
+            count += 0.01;
+            alienContainer.scale.x = Math.sin(count);
+            alienContainer.scale.y = Math.sin(count);
+
+            alienContainer.rotation += 0.01
+            // render the stage
+            renderer.render(stage);
+        }
+    };
+
+})(Catan, PIXI);

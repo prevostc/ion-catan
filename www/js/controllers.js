@@ -5,16 +5,18 @@
     angular.module('starter.controllers', [])
 
         .controller('MapCtrl', function ($scope, $ionicPlatform, Settings) {
+            var ui = Catan.UI.init(
+                '.canvas-container',
+                document.querySelector('.canvas-container').offsetWidth,
+                document.querySelector('.canvas-container').offsetHeight
+            );
             $scope.generate = function () {
-                var canvas = document.querySelector('.canvas');
-                canvas.width = document.querySelector('.canvas-container').offsetWidth;
-                canvas.height = document.querySelector('.canvas-container').offsetHeight;
                 var map = Catan.Generator.Map.generate(Settings.getTileTrioScoreLimit(), Settings.getHarborGenerationStrategy());
-                Catan.UI.drawMap(map, canvas);
-                // @todo: find another fix.
-                // Sometimes, the canvas goes full black (on first launch mainly)
-                // prevent the canvas from remaining black by painting twice
-                Catan.UI.drawMap(map, canvas);
+                Catan.UI.draw(
+                    ui, map,
+                    document.querySelector('.canvas-container').offsetWidth,
+                    document.querySelector('.canvas-container').offsetHeight
+                );
             };
         })
 

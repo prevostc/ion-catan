@@ -10,3 +10,4 @@ plugins/
 *.apk
 icon*x*.png
 build_release.sh
+texturepacker
