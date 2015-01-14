@@ -1,4 +1,3 @@
-//noinspection JSHint
 (function(Catan){
     "use strict";
 
@@ -37,7 +36,7 @@
                 var hexagon, land = Catan.T.Empty, position = new Catan.Position(i, j);
                 if (this.isCoastPosition(i, j)) {
                     hexagon = new Catan.Hexagon.Coast(position, land);
-                } else  {
+                } else {
                     hexagon = new Catan.Hexagon.Land(position, land);
                 }
                 this.board[i][j] = hexagon;
@@ -149,7 +148,7 @@
         this.eachNeighbour(i, j, function (x, y) {
             // remove neighbours lands from allowed lands
             allowedLands = allowedLands.filter(function (element, index, array) {
-                return (map.get(x, y).land !== element);
+                return (map.get(x, y).land != element);
             });
         });
         return allowedLands;

@@ -7,161 +7,6 @@
         debug: false
     };
 
-    Catan.UI.drawMapBasic = function (map, canvas) {
-        var ctx = canvas.getContext('2d');
-
-        // align numbers
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        var screenW = canvas.width;
-        var size = {
-            width: screenW / 9,
-            height: screenW / 9 + screenW / 90,
-            canvasWidth: canvas.width,
-            canvasHeight: canvas.height
-        };
-        var dist = 2;
-
-        // reset canvas
-        //noinspection SillyAssignmentJS
-        canvas.width = canvas.width;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        for (var i = 0; i < map.board.length; i++) {
-            for (var j = 0; j < map.board[i].length; j++) {
-                Catan.UI.drawHexagon(map.get(i, j), ctx, size, dist);
-            }
-        }
-    };
-
-    Catan.UI.drawHexagonBasic = function (hexagon, ctx, size, dist) {
-
-        var getColorFromLand = function (land) {
-            var color;
-            switch (land) {
-                case Catan.T.Hills:
-                    color = "rgb(224, 129, 27)";
-                    break;
-                case Catan.T.Pasture:
-                    color = "rgb(43, 224, 27)";
-                    break;
-                case Catan.T.Mountains:
-                    color = "rgb(145, 145, 145)";
-                    break;
-                case Catan.T.Fields:
-                    color = "rgb(229, 255, 0)";
-                    break;
-                case Catan.T.Forest:
-                    color = "rgb(8, 150, 34)";
-                    break;
-                case Catan.T.Desert:
-                    color = "rgb(255, 255, 117)";
-                    break;
-                case Catan.T.Empty:
-                    color = "rgb(255, 255, 255)";
-                    break;
-                default:
-                    throw "Can't find color for non-coast with this land type: '" + land + "'";
-            }
-            return color;
-        };
-        var getColorFromCoast = function (land) {
-            var color;
-            switch (land) {
-                case Catan.T.Hills:
-                    color = "rgb(224, 129, 27)";
-                    break;
-                case Catan.T.Pasture:
-                    color = "rgb(43, 224, 27)";
-                    break;
-                case Catan.T.Mountains:
-                    color = "rgb(145, 145, 145)";
-                    break;
-                case Catan.T.Fields:
-                    color = "rgb(229, 255, 0)";
-                    break;
-                case Catan.T.Forest:
-                    color = "rgb(8, 150, 34)";
-                    break;
-                case Catan.T.Empty:
-                    color = "rgb(255, 255, 255)";
-                    break;
-                default:
-                    throw "Can't find color for coast with this land type: '" + land + "'";
-            }
-            return color;
-        };
-
-        var width = size.width,
-            height = size.height,
-            mapWidth = width * 7,
-            mapHeight = height * 7 - (1 / 4 * height * 6),
-            cx = hexagon.position.column * (width + dist) - ((hexagon.position.line + 1) % 2) * (width + dist) / 2 + width / 2 + size.canvasWidth / 2 - mapWidth / 2,
-            cy = hexagon.position.line * (3 / 4 * height + dist) + height / 2 + size.canvasHeight / 2 - mapHeight / 2;
-
-        ctx.fillStyle = hexagon.isCoast() ? "rgb(69, 91, 217)" : getColorFromLand(hexagon.land);
-        ctx.beginPath();
-        ctx.moveTo(cx, cy - height / 2);
-        ctx.lineTo(cx + width / 2, cy - height / 4);
-        ctx.lineTo(cx + width / 2, cy + height / 4);
-        ctx.lineTo(cx, cy + height / 2);
-        ctx.lineTo(cx - width / 2, cy + height / 4);
-        ctx.lineTo(cx - width / 2, cy - height / 4);
-        ctx.lineTo(cx, cy - height / 2);
-        ctx.fill();
-
-        var fillCircle = function (cx, cy, r, c) {
-            ctx.lineWidth = 2;
-            ctx.fillStyle = c;
-            ctx.beginPath();
-            ctx.arc(cx, cy, r, 0, Math.PI * 2, true);
-            ctx.closePath();
-            ctx.fill();
-        };
-
-        if (hexagon.isHarbor()) {
-            fillCircle(cx, cy, 11, getColorFromCoast(hexagon.land));
-            ctx.stroke();
-        }
-
-        if (Catan.UI.debug) {
-            // draw coordinates
-            ctx.fillStyle = "rgb(0, 0, 0)";
-            ctx.font = "8pt Arial";
-            ctx.fillText("[" + hexagon.position.column + "," + hexagon.position.line + "]", cx - width / 4 + 1, cy - 5);
-            if (hexagon.number !== undefined) {
-                ctx.font = "12pt Arial";
-                ctx.fillText(hexagon.number + "|" + Catan.Tools.tdsc(hexagon.number), cx - width / 4, cy + 10);
-            }
-        } else {
-            // draw coordinates
-            if (hexagon.number !== undefined) {
-                //draw a circle
-                fillCircle(cx, cy, Math.min(width, height) / 3, "rgb(255, 255, 255)");
-
-                // write number
-                var deltaY = 0;
-                if (Catan.Tools.tdsc(hexagon.number) < 3) {
-                    ctx.fillStyle = "rgb(0, 0, 0)";
-                    ctx.font = "8pt Arial";
-                    deltaY = 5;
-                } else if (Catan.Tools.tdsc(hexagon.number) < 5) {
-                    ctx.fillStyle = "rgb(0, 0, 0)";
-                    ctx.font = "12pt Arial";
-                    deltaY = 6;
-                } else {
-                    ctx.fillStyle = "rgb(245, 24, 24)";
-                    ctx.font = "bold 12pt Arial";
-                    deltaY = 6;
-                }
-                var txtMetrics = ctx.measureText(hexagon.number);
-                var txtWidth = txtMetrics.width;
-                ctx.fillText(hexagon.number, cx - txtWidth / 2, cy + deltaY);
-                ctx.stroke();
-            }
-        }
-    };
-
     Catan.UI.init = function(canvasContainerSelector, width, height) {
         var canvasContainer = document.querySelector(canvasContainerSelector);
 
@@ -182,8 +27,7 @@
     };
 
     Catan.UI.draw = function (renderer, map, width, height) {
-        renderer.view.width = width;
-        renderer.view.height = height;
+        renderer.resize(width, height);
 
         var stage = new PIXI.Stage(0xFFFFFF);
 
@@ -193,57 +37,73 @@
 
         var count = 0;
 
+        var tileWidth = 50,
+            tileHeight = 50;
+
         // create an empty container
-        var alienContainer = new PIXI.DisplayObjectContainer();
-        alienContainer.position.x = width/2;
-        alienContainer.position.y = height/2;
+        var tileContainer = new PIXI.DisplayObjectContainer();
+        tileContainer.position.x = (width / 2) - ((7 * tileWidth) / 2);
+        tileContainer.position.y = (height / 2) - ((7 * tileHeight) / 2);
+        tileContainer.scale.x = 1;
+        tileContainer.scale.y = 1;
+        var tiles = [];
 
-        stage.addChild(alienContainer);
-        onAssetsLoaded();
+        stage.addChild(tileContainer);
 
-        function onAssetsLoaded()
-        {
-
-            // create a texture from an image path
-            // add a bunch of aliens
-            for (var i = 0; i < 20; i++)
-            {
-                // create an alien using the frame name..
-                var alien = PIXI.Sprite.fromFrame(alienFrames[i % 4]);
-
-                alien.position.x = Math.random() * 800 - 400;
-                alien.position.y = Math.random() * 600 - 300;
-                alien.anchor.x = 0.5;
-                alien.anchor.y = 0.5;
-                aliens.push(alien);
-                alienContainer.addChild(alien);
+        var getSpriteNameLand = function (land) {
+            var spriteName;
+            var items = ["ocean.png", "mountain.png"];
+            return items[Math.floor(Math.random()*items.length)];
+            switch (land) {
+                case Catan.T.Fields: spriteName = "field.png";break;
+                case Catan.T.Desert: spriteName = "desert.png";break;
+                case Catan.T.Forest: spriteName = "forest.png";break;
+                case Catan.T.Pasture: spriteName = "pasture.png";break;
+                case Catan.T.Hills: spriteName = "hills.png";break;
+                case Catan.T.Mountains: spriteName = "mountain.png";break;
+                case Catan.T.Ocean: spriteName = "ocean.png";break;
+                case Catan.T.Empty: spriteName = "ocean.png";break;
+                default:
+                    throw "Can't find color for non-coast with this land type: '" + land + "'";
             }
+            return spriteName;
+        };
 
-            // start animating
-            window.requestAnimFrame( animate );
+        var drawHexagonCallback = function(i, j){
+            var hexagon = map.get(i, j);
+            var tile = PIXI.Sprite.fromFrame(getSpriteNameLand(hexagon.land));
+
+            var cx = hexagon.position.column * tileWidth - ((hexagon.position.line + 1) % 2) * tileWidth / 2 + tileWidth / 2,
+                cy = hexagon.position.line * (3 / 4 * tileHeight) + tileHeight / 2;// + canvasHeight / 2 - mapHeight / 2
 
 
-        }
+            tile.position.x = cx;
+            tile.position.y = cy;
+            tile.anchor.x = 0.5;
+            tile.anchor.y = 0.5;
+            tile.scale.x = 0.15;
+            tile.scale.y = 0.15;
+            tile.rotation = Math.PI/2;
+            tiles.push(tile);
+            tileContainer.addChild(tile);
 
-        function animate() {
+            var text = new PIXI.Text("[" + cx + ';' + cy + ']', {font:"11px Arial", fill:"red"});
+            text.position.x = cx;
+            text.position.y = cy;
+            text.anchor.x = 0.5;
+            text.anchor.y = 0.5;
+            tileContainer.addChild(text);
 
-            window.requestAnimFrame( animate );
 
-            // just for fun, lets rotate mr rabbit a little
-            for (var i = 0; i < 20; i++)
-            {
-                var alien = aliens[i];
-                alien.rotation += 0.1;
-            }
-
-            count += 0.01;
-            alienContainer.scale.x = Math.sin(count);
-            alienContainer.scale.y = Math.sin(count);
-
-            alienContainer.rotation += 0.01
-            // render the stage
             renderer.render(stage);
-        }
+        };
+
+        map.each(drawHexagonCallback);
+        map.eachCoast(drawHexagonCallback);
+
+        renderer.render(stage);
     };
+
+
 
 })(Catan, PIXI);
