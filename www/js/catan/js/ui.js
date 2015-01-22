@@ -3,6 +3,7 @@
     "use strict";
 
     var textures = {};
+    var renderer, stage, canvasContainer;
 
     Catan.UI = {
         // if set to true, displays the coordinates system
@@ -13,25 +14,30 @@
     Catan.UI.LowDefinition = {};
 
     Catan.UI.HighDefinition.init = function(canvasContainerSelector, width, height) {
-        var canvasContainer = document.querySelector(canvasContainerSelector);
+        if (renderer) {
+            canvasContainer.appendChild(renderer.view);
+            renderer.render(stage);
+            return renderer;
+        }
+
+        canvasContainer = document.querySelector(canvasContainerSelector);
 
         // You can use either PIXI.WebGLRenderer or PIXI.CanvasRenderer or PIXI.autoDetectRenderer
-        var renderer = new PIXI.CanvasRenderer(width, height);
+        renderer = new PIXI.CanvasRenderer(width, height);
         canvasContainer.appendChild(renderer.view);
-        var stage = new PIXI.Stage(0xFFFFFF);
-        renderer.render(stage);
 
-        if (textures[Catan.T.Fields] === undefined) {
-            textures[Catan.T.Fields] = PIXI.Texture.fromImage("img/field.png");
-            textures[Catan.T.Desert] = PIXI.Texture.fromImage("img/desert.png");
-            textures[Catan.T.Forest] = PIXI.Texture.fromImage("img/forest.png");
-            textures[Catan.T.Pasture] = PIXI.Texture.fromImage("img/pasture.png");
-            textures[Catan.T.Hills] = PIXI.Texture.fromImage("img/hills.png");
-            textures[Catan.T.Mountains] = PIXI.Texture.fromImage("img/mountain.png");
-            textures[Catan.T.Ocean] = PIXI.Texture.fromImage("img/ocean.png");
-            textures[Catan.T.Empty] = PIXI.Texture.fromImage("img/empty.png");
-            textures.token = PIXI.Texture.fromImage("img/number.png");
-        }
+        textures[Catan.T.Fields] = PIXI.Texture.fromImage("img/field.png");
+        textures[Catan.T.Desert] = PIXI.Texture.fromImage("img/desert.png");
+        textures[Catan.T.Forest] = PIXI.Texture.fromImage("img/forest.png");
+        textures[Catan.T.Pasture] = PIXI.Texture.fromImage("img/pasture.png");
+        textures[Catan.T.Hills] = PIXI.Texture.fromImage("img/hills.png");
+        textures[Catan.T.Mountains] = PIXI.Texture.fromImage("img/mountain.png");
+        textures[Catan.T.Ocean] = PIXI.Texture.fromImage("img/ocean.png");
+        textures[Catan.T.Empty] = PIXI.Texture.fromImage("img/empty.png");
+        textures.token = PIXI.Texture.fromImage("img/number.png");
+
+        stage = new PIXI.Stage(0xFFFFFF);
+        renderer.render(stage);
 
         return renderer;
     };

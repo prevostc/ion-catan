@@ -13,31 +13,42 @@
 
             $scope.$on('$ionicView.enter', function(event, data) {
                 $scope.uiDefinition = Settings.getUiDefinition();
-                // @todo: configure pixijs to use an existing canvas
-                // clean pixijs created canvas
-                var canvasToRemove = document.querySelectorAll('canvas:not(.canvas)')[0];
-                if (canvasToRemove) {
-                    canvasToRemove.parentElement.removeChild(canvasToRemove);
+
+                if ($scope.uiDefinition === 'low') {
+                    // @todo: configure pixijs to use an existing canvas
+                    // clean pixijs created canvas
+                    var canvasToRemove = document.querySelectorAll('canvas:not(.canvas)')[0];
+                    if (canvasToRemove) {
+                        canvasToRemove.parentElement.removeChild(canvasToRemove);
+                    }
                 }
 
                 // @todo: only init hd UI if needed
                 highDefUi = Catan.UI.HighDefinition.init('.canvas-container', width(), height());
+
+                if ($scope.map) {
+                    draw();
+                }
             });
 
             $scope.generate = function () {
-                var map = Catan.Generator.Map.generate(Settings.getTileTrioScoreLimit(), Settings.getHarborGenerationStrategy());
+                $scope.map = Catan.Generator.Map.generate(Settings.getTileTrioScoreLimit(), Settings.getHarborGenerationStrategy());
+                draw();
+            };
 
+            var draw = function() {
+                var canvas = document.querySelector('.canvas');
                 if ($scope.uiDefinition !== 'low') {
-                    Catan.UI.HighDefinition.draw(highDefUi, map, width(), height());
+                    canvas.height = 0;
+                    Catan.UI.HighDefinition.draw(highDefUi, $scope.map, width(), height());
                 } else {
-                    var canvas = document.querySelector('.canvas');
                     canvas.width = width();
                     canvas.height = height();
-                    Catan.UI.LowDefinition.drawMap(map, canvas);
+                    Catan.UI.LowDefinition.drawMap($scope.map, canvas);
                     // @todo: find another fix.
                     // Sometimes, the canvas goes full black (on first launch mainly)
                     // prevent the canvas from remaining black by painting twice
-                    Catan.UI.LowDefinition.drawMap(map, canvas);
+                    Catan.UI.LowDefinition.drawMap($scope.map, canvas);
                 }
             };
         })
