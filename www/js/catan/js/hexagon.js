@@ -20,6 +20,10 @@
     Catan.Hexagon.prototype.isLand = function () {
         return false;
     };
+    Catan.Hexagon.prototype.hasNumber = function () {
+        return false;
+    };
+
 
 
     Catan.Hexagon.Land = function (pos, land) {
@@ -29,7 +33,10 @@
     Catan.Hexagon.Land.prototype = new Catan.Hexagon();
 
     Catan.Hexagon.Land.prototype.isLand = function () {
-        return false;
+        return true;
+    };
+    Catan.Hexagon.Land.prototype.hasNumber = function () {
+        return this.number !== undefined;
     };
 
 
