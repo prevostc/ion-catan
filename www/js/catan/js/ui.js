@@ -39,14 +39,17 @@
         var tileWidth = 200,
             tileHeight = 230;
 
-        var mapScale = Math.min(width/(7*tileWidth), height/((17/3)*tileHeight));
+        var mapScale = Math.min(width/(7*tileWidth), height/((19/3)*tileHeight));
 
         // create an empty container
         var tileContainer = new PIXI.DisplayObjectContainer();
 
         // tiles are rotated so width correspond to height
-        tileContainer.position.x = (width / 2) - ((7 * tileWidth * mapScale) / 2);
-        tileContainer.position.y = (height / 2) - (((16/3) * tileHeight * mapScale) / 2);
+        tileContainer.position.x = (width / 2) - (((9/3) * tileWidth * mapScale) / 2);
+        tileContainer.position.y = (height / 2) - ((8 * tileHeight * mapScale) / 2);
+        tileContainer.pivot.x = 0.5;
+        tileContainer.pivot.y = 0.5;
+        tileContainer.rotation = Math.PI/6;
         tileContainer.scale.x = mapScale;
         tileContainer.scale.y = mapScale;
         var tiles = [];
@@ -72,8 +75,7 @@
             tile.scale.y = 1;
             tile.anchor.x = 0.5;
             tile.anchor.y = 0.5;
-            // turn left or right randomly
-            tile.rotation = (Catan.Tools.randInterval(0,1) * 2 - 1) * Math.PI/6;
+            tile.rotation = - (Catan.Tools.randInterval(0,6) * 2 + 1) * Math.PI/6;
             tiles.push(tile);
             tileContainer.addChild(tile);
 
@@ -81,19 +83,20 @@
                 var token = new PIXI.Sprite(textures.token);
                 token.position.x = cx;
                 token.position.y = cy;
-                token.scale.x = 0.8;
-                token.scale.y = 0.8;
+                token.scale.x = 1.1;
+                token.scale.y = 1.1;
                 token.anchor.x = 0.5;
                 token.anchor.y = 0.5;
                 tileContainer.addChild(token);
 
-                var textSize = Catan.Tools.tdsc(hexagon.number) * 5 + 15;
+                var textSize = Catan.Tools.tdsc(hexagon.number) * 5 + 45;
                 var textColor = Catan.Tools.tdsc(hexagon.number) >= 5 ? 'red' : 'black';
                 var text = new PIXI.Text(hexagon.number, {font: textSize + "px Arial", fill:textColor});
                 text.position.x = cx;
                 text.position.y = cy;
                 text.anchor.x = 0.5;
                 text.anchor.y = 0.5;
+                text.rotation = -Math.PI/6;
                 tileContainer.addChild(text);
             }
 
@@ -102,12 +105,11 @@
                 var harbor = new PIXI.Sprite(textures[hexagon.land]);
                 harbor.position.x = cx;
                 harbor.position.y = cy;
-                harbor.scale.x = 0.3;
-                harbor.scale.y = 0.3;
+                harbor.scale.x = 0.4;
+                harbor.scale.y = 0.4;
                 harbor.anchor.x = 0.5;
                 harbor.anchor.y = 0.5;
-                // turn left or right randomly
-                harbor.rotation = (Catan.Tools.randInterval(0,1) * 2 - 1) * Math.PI/6;
+                harbor.rotation = - (Catan.Tools.randInterval(0,6) * 2 + 1) * Math.PI/6;
                 tileContainer.addChild(harbor);
             }
         };
@@ -117,7 +119,5 @@
 
         renderer.render(stage);
     };
-
-
 
 })(Catan, PIXI);
