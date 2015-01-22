@@ -5,18 +5,40 @@
     angular.module('starter.controllers', [])
 
         .controller('MapCtrl', function ($scope, $ionicPlatform, Settings) {
-            var ui = Catan.UI.init(
-                '.canvas-container',
-                document.querySelector('.canvas-container').offsetWidth,
-                document.querySelector('.canvas-container').offsetHeight
-            );
+            // use function so that css has time to apply
+            var width = function(){ return document.querySelector('.canvas-container').offsetWidth; };
+            var height = function(){ return document.querySelector('.canvas-container').offsetHeight; };
+
+            var highDefUi;
+
+            $scope.$on('$ionicView.enter', function(event, data) {
+                $scope.uiDefinition = Settings.getUiDefinition();
+                // @todo: configure pixijs to use an existing canvas
+                // clean pixijs created canvas
+                var canvasToRemove = document.querySelectorAll('canvas:not(.canvas)')[0];
+                if (canvasToRemove) {
+                    canvasToRemove.parentElement.removeChild(canvasToRemove);
+                }
+
+                // @todo: only init hd UI if needed
+                highDefUi = Catan.UI.HighDefinition.init('.canvas-container', width(), height());
+            });
+
             $scope.generate = function () {
                 var map = Catan.Generator.Map.generate(Settings.getTileTrioScoreLimit(), Settings.getHarborGenerationStrategy());
-                Catan.UI.draw(
-                    ui, map,
-                    document.querySelector('.canvas-container').offsetWidth,
-                    document.querySelector('.canvas-container').offsetHeight
-                );
+
+                if ($scope.uiDefinition !== 'low') {
+                    Catan.UI.HighDefinition.draw(highDefUi, map, width(), height());
+                } else {
+                    var canvas = document.querySelector('.canvas');
+                    canvas.width = width();
+                    canvas.height = height();
+                    Catan.UI.LowDefinition.drawMap(map, canvas);
+                    // @todo: find another fix.
+                    // Sometimes, the canvas goes full black (on first launch mainly)
+                    // prevent the canvas from remaining black by painting twice
+                    Catan.UI.LowDefinition.drawMap(map, canvas);
+                }
             };
         })
 
@@ -51,6 +73,23 @@
             }
             $scope.updateHarborGenerationStrategy = function () {
                 Settings.setHarborGenerationStrategy(this.selectedHarborGenerationStrategy.id);
+            };
+
+
+
+            $scope.uiDefinitionOptions = [
+                {id: 'low', label: 'Low Def. (homemade)'},
+                {id: 'high', label: 'High Def. (PIXI.js powered)'}
+            ];
+            var selectedUiDefinitionValue = Settings.getUiDefinition();
+            $scope.selectedUiDefinition = null;
+            for (i = 0; i < $scope.uiDefinitionOptions.length; i++) {
+                if ($scope.uiDefinitionOptions[i].id === selectedUiDefinitionValue) {
+                    $scope.selectedUiDefinition = $scope.uiDefinitionOptions[i];
+                }
+            }
+            $scope.updateUiDefinition = function () {
+                Settings.setUiDefinition(this.selectedUiDefinition.id);
             };
         });
 

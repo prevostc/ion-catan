@@ -18,6 +18,13 @@
             },
             setHarborGenerationStrategy: function (harborGenerationStrategy) {
                 localStorageService.set('harborGenerationStrategy', harborGenerationStrategy);
+            },
+
+            getUiDefinition: function () {
+                return localStorageService.get('uiDefinition') || 'high';
+            },
+            setUiDefinition: function (uiDefinition) {
+                localStorageService.set('uiDefinition', uiDefinition);
             }
         };
     });

@@ -20,6 +20,15 @@
                         ng-options="option as option.label for option in harborGenerationStrategyOptions">
                 </select>
             </label>
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    User Interface
+                </div>
+                <select ng-model="selectedUiDefinition"
+                        ng-change="updateUiDefinition()"
+                        ng-options="option as option.label for option in uiDefinitionOptions">
+                </select>
+            </label>
         </ion-list>
     </ion-content>
 </ion-view>
