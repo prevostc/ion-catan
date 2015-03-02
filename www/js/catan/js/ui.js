@@ -3,7 +3,7 @@
     "use strict";
 
     var textures = {};
-    var renderer, stage, areAssetsLoaded = false;
+    var areAssetsLoaded = false;
 
     Catan.UI = {
         // if set to true, displays the coordinates system
@@ -18,19 +18,11 @@
     };
 
     Catan.UI.HighDefinition.init = function(canvasContainer, width, height, loadedCallback) {
-        if (renderer) {
-            canvasContainer.appendChild(renderer.view);
-            renderer.render(stage);
-            loadedCallback();
-            return renderer;
-        }
-
         // You can use either PIXI.WebGLRenderer or PIXI.CanvasRenderer or PIXI.autoDetectRenderer
         // set a zero height at first so that the black screen is hidden
-        renderer = new PIXI.CanvasRenderer(width, height);
-        canvasContainer.appendChild(renderer.view);
+        var renderer = new PIXI.CanvasRenderer(width, height, {view: canvasContainer.childNodes[0]});
 
-        stage = new PIXI.Stage(0xFFFFFF);
+        var stage = new PIXI.Stage(0xFFFFFF);
         renderer.render(stage);
 
         var assets = [
@@ -51,12 +43,12 @@
                 textures[Catan.T.Empty] = PIXI.Texture.fromFrame("img/empty.png");
                 textures.token = PIXI.Texture.fromFrame("img/number.png");
                 areAssetsLoaded = true;
-                loadedCallback();
+                loadedCallback(renderer);
             };
 
             loader.load();
         } else {
-            loadedCallback();
+            loadedCallback(renderer);
         }
 
         return renderer;

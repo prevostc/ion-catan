@@ -125,53 +125,41 @@
                 scope: {
                     mapData: '='
                 },
-                template: '',
+                template: '<canvas></canvas>',
                 link: function(scope, element, attrs) {
-                    var uiDefinition = Settings.getUiDefinition();
-                    var doDraw = false;
+                    var assetLoaded = false;
 
                     scope.canvasContainer = element[0];
-                    if (uiDefinition === 'high') {
-                        // @todo: only init hd UI if needed
-                        var highDefUi = Catan.UI.HighDefinition.init(
-                            scope.canvasContainer,
-                            scope.canvasContainer.parentElement.offsetWidth,
-                            scope.canvasContainer.parentElement.offsetHeight,
-                            function() {
-                                doDraw = true;
-                            }
-                        );
-                    } else {
-                        doDraw = true;
-                    }
+
+                    var renderer = Catan.UI.HighDefinition.init(
+                        scope.canvasContainer,
+                        scope.canvasContainer.parentElement.offsetWidth,
+                        scope.canvasContainer.parentElement.offsetHeight,
+                        function(renderer) {
+                            assetLoaded = true;
+                        }
+                    );
 
                     scope.$watch('mapData', function(mapData) {
-                        if (! mapData || ! doDraw) {
+                        if (! mapData) {
                             return;
                         }
-
-                        if (!scope.canvasContainer.childNodes[0]) {
-                            scope.canvasContainer.appendChild(document.createElement('canvas'));
-                        }
+                        var uiDefinition = Settings.getUiDefinition();
                         var canvas = scope.canvasContainer.childNodes[0];
 
                         if (uiDefinition === 'low') {
                             canvas.width = scope.canvasContainer.parentElement.offsetWidth;
                             canvas.height = scope.canvasContainer.parentElement.offsetHeight;
                             Catan.UI.LowDefinition.drawMap(mapData.map, canvas);
-                            // @todo: find another fix.
-                            // Sometimes, the canvas goes full black (on first launch mainly)
-                            // prevent the canvas from remaining black by painting twice
-                            Catan.UI.LowDefinition.drawMap(mapData.map, canvas);
                             mapData.thumbnailImageUri = Catan.UI.LowDefinition.getBase64String(canvas);
-                        } else {
+                        } else if (assetLoaded) {
                             Catan.UI.HighDefinition.draw(
-                                highDefUi,
+                                renderer,
                                 mapData.map,
                                 scope.canvasContainer.parentElement.offsetWidth,
                                 scope.canvasContainer.parentElement.offsetHeight
                             );
-                            mapData.map.thumbnailImageUri = Catan.UI.HighDefinition.getBase64String(highDefUi);
+                            mapData.map.thumbnailImageUri = Catan.UI.HighDefinition.getBase64String(renderer);
                         }
                     });
                 }
