@@ -3,7 +3,7 @@
     "use strict";
 
     var textures = {};
-    var renderer, stage, canvasContainer;
+    var renderer, stage, areAssetsLoaded = false;
 
     Catan.UI = {
         // if set to true, displays the coordinates system
@@ -13,38 +13,56 @@
     Catan.UI.HighDefinition = {};
     Catan.UI.LowDefinition = {};
 
-    Catan.UI.HighDefinition.init = function(canvasContainerSelector, width, height) {
+    Catan.UI.HighDefinition.getBase64String = function (renderer) {
+        return renderer.view.toDataURL();
+    };
+
+    Catan.UI.HighDefinition.init = function(canvasContainer, width, height, loadedCallback) {
         if (renderer) {
             canvasContainer.appendChild(renderer.view);
             renderer.render(stage);
+            loadedCallback();
             return renderer;
         }
 
-        canvasContainer = document.querySelector(canvasContainerSelector);
-
         // You can use either PIXI.WebGLRenderer or PIXI.CanvasRenderer or PIXI.autoDetectRenderer
+        // set a zero height at first so that the black screen is hidden
         renderer = new PIXI.CanvasRenderer(width, height);
         canvasContainer.appendChild(renderer.view);
 
-        textures[Catan.T.Fields] = PIXI.Texture.fromImage("img/field.png");
-        textures[Catan.T.Desert] = PIXI.Texture.fromImage("img/desert.png");
-        textures[Catan.T.Forest] = PIXI.Texture.fromImage("img/forest.png");
-        textures[Catan.T.Pasture] = PIXI.Texture.fromImage("img/pasture.png");
-        textures[Catan.T.Hills] = PIXI.Texture.fromImage("img/hills.png");
-        textures[Catan.T.Mountains] = PIXI.Texture.fromImage("img/mountain.png");
-        textures[Catan.T.Ocean] = PIXI.Texture.fromImage("img/ocean.png");
-        textures[Catan.T.Empty] = PIXI.Texture.fromImage("img/empty.png");
-        textures.token = PIXI.Texture.fromImage("img/number.png");
-
         stage = new PIXI.Stage(0xFFFFFF);
         renderer.render(stage);
+
+        var assets = [
+            "img/field.png", "img/desert.png", "img/forest.png", "img/pasture.png",
+            "img/hills.png","img/mountain.png","img/ocean.png","img/empty.png", "img/number.png"
+        ];
+
+        if (!areAssetsLoaded) {
+            var loader = new PIXI.AssetLoader(assets, false);
+            loader.onComplete = function(){
+                textures[Catan.T.Fields] = PIXI.Texture.fromFrame("img/field.png");
+                textures[Catan.T.Desert] = PIXI.Texture.fromFrame("img/desert.png");
+                textures[Catan.T.Forest] = PIXI.Texture.fromFrame("img/forest.png");
+                textures[Catan.T.Pasture] = PIXI.Texture.fromFrame("img/pasture.png");
+                textures[Catan.T.Hills] = PIXI.Texture.fromFrame("img/hills.png");
+                textures[Catan.T.Mountains] = PIXI.Texture.fromFrame("img/mountain.png");
+                textures[Catan.T.Ocean] = PIXI.Texture.fromFrame("img/ocean.png");
+                textures[Catan.T.Empty] = PIXI.Texture.fromFrame("img/empty.png");
+                textures.token = PIXI.Texture.fromFrame("img/number.png");
+                areAssetsLoaded = true;
+                loadedCallback();
+            };
+
+            loader.load();
+        } else {
+            loadedCallback();
+        }
 
         return renderer;
     };
 
     Catan.UI.HighDefinition.draw = function (renderer, map, width, height) {
-        renderer.resize(width, height);
-
         var stage = new PIXI.Stage(0xFFFFFF);
 
         var tileWidth = 200,
@@ -131,6 +149,11 @@
         renderer.render(stage);
     };
 
+
+
+    Catan.UI.LowDefinition.getBase64String = function (canvas) {
+        return canvas.toDataURL();
+    };
 
     Catan.UI.LowDefinition.drawMap = function (map, canvas) {
         var ctx = canvas.getContext('2d');

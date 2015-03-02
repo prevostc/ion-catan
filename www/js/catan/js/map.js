@@ -1,3 +1,4 @@
+//noinspection JSHint
 (function(Catan){
     "use strict";
 
@@ -43,9 +44,28 @@
             }
         }
         this.center = center;
-
+        this.width = width;
+        this.height = height;
     };
 
+    Catan.Map.serialize = function(map) {
+        for (var i = 0 ; i < map.board.length ; i++) {
+            for (var j = 0; j < map.board[i].length; j++) {
+                map.board[i][j] = Catan.Hexagon.serialize(map.board[i][j]);
+            }
+        }
+        return map;
+    };
+    Catan.Map.unserialize = function(serializedMap) {
+        var map = new Catan.Map(serializedMap.height, serializedMap.width, Catan.Position.unserialize(serializedMap.center));
+        map.coastOrderedCoordinates = serializedMap.coastOrderedCoordinates;
+        for (var i = 0 ; i < serializedMap.board.length ; i++) {
+            for (var j = 0; j < serializedMap.board[i].length; j++) {
+                map.board[i][j] = Catan.Hexagon.unserialize(serializedMap.board[i][j]);
+            }
+        }
+        return map;
+    };
 
     Catan.Map.prototype.each = function (callback) {
         var line;
@@ -148,7 +168,7 @@
         this.eachNeighbour(i, j, function (x, y) {
             // remove neighbours lands from allowed lands
             allowedLands = allowedLands.filter(function (element, index, array) {
-                return (map.get(x, y).land != element);
+                return (map.get(x, y).land !== element);
             });
         });
         return allowedLands;

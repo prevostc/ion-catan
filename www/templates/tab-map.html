@@ -1,7 +1,13 @@
-<ion-view view-title="Map Generator" ng-init="init()">
+<ion-view view-title="{{mapData.name && mapData.name || 'Map Generator'}}" ng-init="init()">
+    <ion-nav-buttons side="secondary">
+        <button ng-if="mapData.map && starred" class="button button-icon icon ion-checkmark">
+        </button>
+        <button ng-if="mapData.map && !starred" class="button button-icon icon ion-star" ng-click="star()">
+        </button>
+    </ion-nav-buttons>
     <ion-content class="padding" scroll="false">
         <div class="canvas-container">
-            <canvas class="canvas">Sorry! Your browser doesn't support Canvas.</canvas>
+            <map map-data="mapData"></map>
         </div>
     </ion-content>
     <ion-footer-bar>

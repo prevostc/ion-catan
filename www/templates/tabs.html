@@ -5,16 +5,19 @@ navigation history that also transitions its views in and out.
 -->
 <ion-tabs class="tabs-icon-top tabs-color-active-positive">
 
+    <!-- Favorites Tab -->
+    <ion-tab title="Favorites" icon-off="ion-clock" icon-on="ion-clock" href="#/tab/favorites">
+        <ion-nav-view name="tab-favorites"></ion-nav-view>
+    </ion-tab>
 
-  <!-- Dashboard Tab -->
-  <ion-tab title="Map" icon-off="ion-home" icon-on="ion-home" href="#/tab/map">
-    <ion-nav-view name="tab-map"></ion-nav-view>
-  </ion-tab>
+    <!-- Dashboard Tab -->
+    <ion-tab title="Map" icon-off="ion-home" icon-on="ion-home" href="#/tab/map">
+        <ion-nav-view name="tab-map"></ion-nav-view>
+    </ion-tab>
 
-  <!-- Account Tab -->
-  <ion-tab title="Settings" icon-off="ion-ios7-gear-outline" icon-on="ion-ios7-gear" href="#/tab/settings">
-    <ion-nav-view name="tab-settings"></ion-nav-view>
-  </ion-tab>
-
+    <!-- Settings Tab -->
+    <ion-tab title="Settings" icon-off="ion-ios7-gear-outline" icon-on="ion-ios7-gear" href="#/tab/settings">
+        <ion-nav-view name="tab-settings"></ion-nav-view>
+    </ion-tab>
 
 </ion-tabs>

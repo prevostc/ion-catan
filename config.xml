@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.prevostc.catansimplemapgenerator" version="1.1.0" xmlns="http://www.w3.org/ns/widgets"
+<widget id="com.prevostc.settlerseasymap" version="1.0.0" xmlns="http://www.w3.org/ns/widgets"
         xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Catan Simple Map Generator</name>
+    <name>Settlers: Easy Map</name>
     <description>
-        The catan bro to help you generate a map
+        Generate maps for The Settlers of Catan Board game
     </description>
     <author email="prevostclement@gmail.com" href="https://github.com/prevostc">
         Clément Prévost

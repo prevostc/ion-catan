@@ -2,54 +2,63 @@
 (function (angular, Catan) {
     "use strict";
 
+    function MapData() {
+        this.map = null;
+        this.id = null;
+        this.thumbnailImageUri = null;
+        this.name = null;
+        this.catchPhrase = null;
+    }
+
+    // use function so that css has time to apply
+    var width = function(){ return document.querySelector('.canvas-container').offsetWidth; };
+    var height = function(){ return document.querySelector('.canvas-container').offsetHeight; };
+
     angular.module('starter.controllers', [])
 
-        .controller('MapCtrl', function ($scope, $ionicPlatform, Settings) {
-            // use function so that css has time to apply
-            var width = function(){ return document.querySelector('.canvas-container').offsetWidth; };
-            var height = function(){ return document.querySelector('.canvas-container').offsetHeight; };
+        .controller('MapCtrl', function ($scope, mapData, $ionicPlatform, Settings, Favorites, Image, Faker, Id) {
 
             var highDefUi;
 
             $scope.$on('$ionicView.enter', function(event, data) {
-                $scope.uiDefinition = Settings.getUiDefinition();
-
-                if ($scope.uiDefinition === 'low') {
-                    // @todo: configure pixijs to use an existing canvas
-                    // clean pixijs created canvas
-                    var canvasToRemove = document.querySelectorAll('canvas:not(.canvas)')[0];
-                    if (canvasToRemove) {
-                        canvasToRemove.parentElement.removeChild(canvasToRemove);
-                    }
-                }
-
-                // @todo: only init hd UI if needed
-                highDefUi = Catan.UI.HighDefinition.init('.canvas-container', width(), height());
-
-                if ($scope.map) {
-                    draw();
+                // if we want to see a starred item
+                if (mapData) {
+                    $scope.mapData = mapData;
+                    $scope.starred = true;
                 }
             });
 
             $scope.generate = function () {
-                $scope.map = Catan.Generator.Map.generate(Settings.getTileTrioScoreLimit(), Settings.getHarborGenerationStrategy());
-                draw();
+                // generate map tiles
+                var mapData = new MapData();
+                mapData.map = Catan.Generator.Map.generate(Settings.getTileTrioScoreLimit(), Settings.getHarborGenerationStrategy());
+
+                // generate map id
+                mapData.id = Id.next();
+
+                // generate map name and catchphrase
+                mapData.name = Faker.getMapName();
+                mapData.catchPhrase = Faker.getMapCatchPhrase();
+
+                $scope.mapData = mapData;
+                $scope.starred = false;
             };
 
-            var draw = function() {
-                var canvas = document.querySelector('.canvas');
-                if ($scope.uiDefinition !== 'low') {
-                    canvas.height = 0;
-                    Catan.UI.HighDefinition.draw(highDefUi, $scope.map, width(), height());
-                } else {
-                    canvas.width = width();
-                    canvas.height = height();
-                    Catan.UI.LowDefinition.drawMap($scope.map, canvas);
-                    // @todo: find another fix.
-                    // Sometimes, the canvas goes full black (on first launch mainly)
-                    // prevent the canvas from remaining black by painting twice
-                    Catan.UI.LowDefinition.drawMap($scope.map, canvas);
-                }
+            $scope.starred = false;
+            $scope.star = function() {
+                // resize image and save
+                var widthCoeff = 1/ (Math.max(width(), height()) / Image.getThumbnailWidth());
+                var heightCoeff = 1/ (Math.max(width(), height()) / Image.getThumbnailHeight());
+                Image.resizeBase64Uri($scope.mapData.thumbnailImageUri, function(resizedBase46Url) {
+                        $scope.$apply(function(){
+                            $scope.mapData.thumbnailImageUri = resizedBase46Url;
+                            Favorites.save($scope.mapData);
+                            $scope.starred = true;
+                        });
+                    },
+                    widthCoeff * width(),
+                    heightCoeff * height()
+                );
             };
         })
 
@@ -86,8 +95,6 @@
                 Settings.setHarborGenerationStrategy(this.selectedHarborGenerationStrategy.id);
             };
 
-
-
             $scope.uiDefinitionOptions = [
                 {id: 'low', label: 'Low Def. (homemade)'},
                 {id: 'high', label: 'High Def. (PIXI.js powered)'}
@@ -102,6 +109,86 @@
             $scope.updateUiDefinition = function () {
                 Settings.setUiDefinition(this.selectedUiDefinition.id);
             };
-        });
+        })
+
+        .controller('FavoritesCtrl', function ($scope, Favorites, $ionicListDelegate) {
+            $scope.items = Favorites.fetchAll();
+
+            $scope.$on('$ionicView.enter', function(event, data) {
+                $scope.items = Favorites.fetchAll();
+            });
+
+            $scope.toggleDeleteButtons = function() {
+                $ionicListDelegate.showDelete(! $ionicListDelegate.showDelete());
+            };
+
+            $scope.deleteItem = function(mapData) {
+                Favorites.remove(mapData);
+                $scope.items = Favorites.fetchAll();
+            };
+        })
+
+        .directive("map", function (Settings)
+        {
+            return {
+                restrict: 'E',
+                scope: {
+                    mapData: '='
+                },
+                template: '',
+                link: function(scope, element, attrs) {
+                    var uiDefinition = Settings.getUiDefinition();
+                    var doDraw = false;
+
+                    scope.canvasContainer = element[0];
+                    if (uiDefinition === 'high') {
+                        // @todo: only init hd UI if needed
+                        var highDefUi = Catan.UI.HighDefinition.init(
+                            scope.canvasContainer,
+                            scope.canvasContainer.parentElement.offsetWidth,
+                            scope.canvasContainer.parentElement.offsetHeight,
+                            function() {
+                                doDraw = true;
+                            }
+                        );
+                    } else {
+                        doDraw = true;
+                    }
+
+                    scope.$watch('mapData', function(mapData) {
+                        if (! mapData || ! doDraw) {
+                            return;
+                        }
+
+                        if (!scope.canvasContainer.childNodes[0]) {
+                            scope.canvasContainer.appendChild(document.createElement('canvas'));
+                        }
+                        var canvas = scope.canvasContainer.childNodes[0];
+
+                        if (uiDefinition === 'low') {
+                            canvas.width = scope.canvasContainer.parentElement.offsetWidth;
+                            canvas.height = scope.canvasContainer.parentElement.offsetHeight;
+                            Catan.UI.LowDefinition.drawMap(mapData.map, canvas);
+                            // @todo: find another fix.
+                            // Sometimes, the canvas goes full black (on first launch mainly)
+                            // prevent the canvas from remaining black by painting twice
+                            Catan.UI.LowDefinition.drawMap(mapData.map, canvas);
+                            mapData.thumbnailImageUri = Catan.UI.LowDefinition.getBase64String(canvas);
+                        } else {
+                            Catan.UI.HighDefinition.draw(
+                                highDefUi,
+                                mapData.map,
+                                scope.canvasContainer.parentElement.offsetWidth,
+                                scope.canvasContainer.parentElement.offsetHeight
+                            );
+                            mapData.map.thumbnailImageUri = Catan.UI.HighDefinition.getBase64String(highDefUi);
+                        }
+                    });
+                }
+            };
+        })
+    ;
+
+
 
 })(angular, Catan);

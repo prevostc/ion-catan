@@ -1,0 +1,20 @@
+<ion-view view-title="Favorites">
+    <ion-nav-buttons side="secondary">
+        <button
+            class="button button-icon icon ion-minus-circled"
+            ng-click="toggleDeleteButtons()">
+        </button>
+    </ion-nav-buttons>
+    <ion-content>
+        <ion-list>
+            <ion-item ng-repeat="item in items"
+                  class="item-thumbnail-left"
+                  href="#/tab/map/{{item.id}}">
+                <img ng-src="{{item.thumbnailImageUri}}">
+                <h2>{{item.name}}</h2>
+                <p>{{item.catchPhrase}}</p>
+                <ion-delete-button class="ion-minus-circled" ng-click="deleteItem(item)"></ion-delete-button>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>
