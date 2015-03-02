@@ -1,8 +1,8 @@
 <ion-view view-title="{{mapData.name && mapData.name || 'Map Generator'}}" ng-init="init()">
     <ion-nav-buttons side="secondary">
-        <button ng-if="mapData.map && starred" class="button button-icon icon ion-checkmark">
-        </button>
-        <button ng-if="mapData.map && !starred" class="button button-icon icon ion-star" ng-click="star()">
+        <button ng-if="mapData.map"
+                class="button button-icon icon-right icon"
+                ng-class="{'ion-checkmark': starred, 'ion-star': !starred}" ng-click="star()">
         </button>
     </ion-nav-buttons>
     <ion-content class="padding" scroll="false">
@@ -12,7 +12,7 @@
     </ion-content>
     <ion-footer-bar>
         <div class="button-bar">
-            <button ng-click="generate()" class="button button-dark button-clear icon-right ion-shuffle">
+            <button ng-click="generate()" class="button button-dark button-clear icon icon-right ion-shuffle">
                 Generate !
             </button>
         </div>

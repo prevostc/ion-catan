@@ -123,7 +123,7 @@
             return {
                 restrict: 'E',
                 scope: {
-                    mapData: '='
+                    mapData: '=mapData'
                 },
                 template: '<canvas></canvas>',
                 link: function(scope, element, attrs) {
@@ -151,7 +151,7 @@
                             canvas.width = scope.canvasContainer.parentElement.offsetWidth;
                             canvas.height = scope.canvasContainer.parentElement.offsetHeight;
                             Catan.UI.LowDefinition.drawMap(mapData.map, canvas);
-                            mapData.thumbnailImageUri = Catan.UI.LowDefinition.getBase64String(canvas);
+                            scope.mapData.thumbnailImageUri = Catan.UI.LowDefinition.getBase64String(canvas);
                         } else if (assetLoaded) {
                             Catan.UI.HighDefinition.draw(
                                 renderer,
@@ -159,7 +159,7 @@
                                 scope.canvasContainer.parentElement.offsetWidth,
                                 scope.canvasContainer.parentElement.offsetHeight
                             );
-                            mapData.map.thumbnailImageUri = Catan.UI.HighDefinition.getBase64String(renderer);
+                            scope.mapData.thumbnailImageUri = Catan.UI.HighDefinition.getBase64String(renderer);
                         }
                     });
                 }
