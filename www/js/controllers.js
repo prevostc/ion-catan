@@ -16,17 +16,7 @@
 
     angular.module('starter.controllers', [])
 
-        .controller('MapCtrl', function ($scope, mapData, $ionicPlatform, Settings, Favorites, Image, Faker, Id) {
-
-            var highDefUi;
-
-            $scope.$on('$ionicView.enter', function(event, data) {
-                // if we want to see a starred item
-                if (mapData) {
-                    $scope.mapData = mapData;
-                    $scope.starred = true;
-                }
-            });
+        .controller('MapCtrl', function ($scope, $ionicPlatform, Settings, Favorites, Image, Faker, Id) {
 
             $scope.generate = function () {
                 // generate map tiles
@@ -186,6 +176,9 @@
                     });
                 }
             };
+        })
+        .controller('FavoritesViewCtrl', function ($scope, mapData) {
+            $scope.mapData = mapData;
         })
     ;
 

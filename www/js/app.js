@@ -41,22 +41,12 @@
                 })
 
                 // Each tab has its own nav history stack:
-
                 .state('tab.map', {
-                    url: '/map{map:(?:/[^/]+)?}',
+                    url: '/map',
                     views: {
                         'tab-map': {
                             templateUrl: 'templates/tab-map.html',
                             controller: 'MapCtrl'
-                        }
-                    },
-                    resolve: {
-                        mapData: function ($stateParams, Favorites) {
-                            var mapId = parseInt($stateParams.map.substring(1));
-                            if (isNaN(mapId)) {
-                                return null;
-                            }
-                            return Favorites.fetchById(mapId);
                         }
                     }
                 })
@@ -79,7 +69,28 @@
                             controller: 'FavoritesCtrl'
                         }
                     }
-                });
+                })
+
+                // Each tab has its own nav history stack:
+                .state('tab.favorites-view', {
+                    url: '/favorites/:mapData',
+                    views: {
+                        'tab-favorites': {
+                            templateUrl: 'templates/tab-favorites-view.html',
+                            controller: 'FavoritesViewCtrl'
+                        }
+                    },
+                    resolve: {
+                        mapData: function ($stateParams, Favorites) {
+                            var mapId = parseInt($stateParams.mapData);
+                            if (isNaN(mapId)) {
+                                return null;
+                            }
+                            return Favorites.fetchById(mapId);
+                        }
+                    }
+                })
+            ;
 
             // if none of the above states are matched, use this as the fallback
             $urlRouterProvider.otherwise('/tab/map');
