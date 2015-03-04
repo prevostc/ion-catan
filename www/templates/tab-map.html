@@ -1,7 +1,7 @@
 <ion-view view-title="{{mapData.name && mapData.name || 'Map Generator'}}" ng-init="init()">
     <ion-nav-buttons side="secondary">
         <button ng-if="mapData.map"
-                class="button button-icon icon-right icon"
+                class="button button-icon icon-right icon favorite-button"
                 ng-class="{'ion-checkmark': starred, 'ion-star': !starred}" ng-click="star()">
         </button>
     </ion-nav-buttons>

@@ -16,3 +16,19 @@
     max-width: 150px;
     max-height: 150px;
 }
+
+.list .item:first-child{
+    border-top: none;
+}
+
+.list .item:last-child {
+    border-bottom: none;
+}
+
+
+.ion-star.favorite-button, .ion-star.favorite-button:focus, .ion-star.favorite-button:hover {
+    color: rgb(255, 206, 52);
+}
+.ion-checkmark.favorite-button, .ion-checkmark.favorite-button:focus, .ion-checkmark.favorite-button:hover {
+    color: rgb(43, 174, 55);
+}

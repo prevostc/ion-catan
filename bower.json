@@ -7,6 +7,7 @@
   "dependencies": {
     "angular-local-storage": "~0.1.5",
     "pixi": "~2.2.3",
-    "Faker": "~2.1.2"
+    "Faker": "~2.1.2",
+    "ionicons": "~2.0.1"
   }
 }

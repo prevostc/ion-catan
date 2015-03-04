@@ -10,10 +10,6 @@
         this.catchPhrase = null;
     }
 
-    // use function so that css has time to apply
-    var width = function(){ return document.querySelector('.canvas-container').offsetWidth; };
-    var height = function(){ return document.querySelector('.canvas-container').offsetHeight; };
-
     angular.module('starter.controllers', [])
 
         .controller('MapCtrl', function ($scope, $ionicPlatform, Settings, Favorites, Image, Faker, Id) {
