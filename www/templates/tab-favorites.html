@@ -13,6 +13,8 @@
                 <img ng-src="{{item.thumbnailImageUri}}">
                 <h2>{{item.name}}</h2>
                 <p>{{item.catchPhrase}}</p>
+                <p>Harbors: {{item.harborGenerationPhrase}}</p>
+                <p>Fairness: {{item.fairnessPhrase}}</p>
                 <ion-delete-button class="ion-minus-circled" ng-click="deleteItem(item)"></ion-delete-button>
             </ion-item>
         </ion-list>

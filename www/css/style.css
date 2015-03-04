@@ -2,3 +2,17 @@
 .canvas-container {
     height: 100%;
 }
+
+.my-image-item{
+    left: 0;
+    right: 0;
+}
+
+.my-image-item img {
+    height: 100%;
+}
+
+.item-avatar.my-image-item img {
+    max-width: 150px;
+    max-height: 150px;
+}

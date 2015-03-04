@@ -30,25 +30,25 @@
                 mapData.name = Faker.getMapName();
                 mapData.catchPhrase = Faker.getMapCatchPhrase();
 
+                // store generation metadata
+                mapData.harborGenerationPhrase = {
+                    'separate-tiles': 'Separate Tiles (18 tiles)',
+                    'coast-bars': 'Enclosing edges bars (6 long pieces)'
+                }[Settings.getHarborGenerationStrategy()];
+                mapData.fairnessPhrase = {
+                    11: 'Fair',
+                    12: 'Normal',
+                    13: 'Unfair'
+                }[Settings.getTileTrioScoreLimit()];
+
                 $scope.mapData = mapData;
                 $scope.starred = false;
             };
 
             $scope.starred = false;
             $scope.star = function() {
-                // resize image and save
-                var widthCoeff = 1/ (Math.max(width(), height()) / Image.getThumbnailWidth());
-                var heightCoeff = 1/ (Math.max(width(), height()) / Image.getThumbnailHeight());
-                Image.resizeBase64Uri($scope.mapData.thumbnailImageUri, function(resizedBase46Url) {
-                        $scope.$apply(function(){
-                            $scope.mapData.thumbnailImageUri = resizedBase46Url;
-                            Favorites.save($scope.mapData);
-                            $scope.starred = true;
-                        });
-                    },
-                    widthCoeff * width(),
-                    heightCoeff * height()
-                );
+                Favorites.save($scope.mapData);
+                $scope.starred = true;
             };
         })
 
@@ -118,7 +118,7 @@
             };
         })
 
-        .directive("map", function (Settings)
+        .directive("map", function (Settings, Image)
         {
             return {
                 restrict: 'E',
@@ -151,7 +151,6 @@
                             canvas.width = scope.canvasContainer.parentElement.offsetWidth;
                             canvas.height = scope.canvasContainer.parentElement.offsetHeight;
                             Catan.UI.LowDefinition.drawMap(mapData.map, canvas);
-                            scope.mapData.thumbnailImageUri = Catan.UI.LowDefinition.getBase64String(canvas);
                         } else if (assetLoaded) {
                             Catan.UI.HighDefinition.draw(
                                 renderer,
@@ -159,8 +158,12 @@
                                 scope.canvasContainer.parentElement.offsetWidth,
                                 scope.canvasContainer.parentElement.offsetHeight
                             );
-                            scope.mapData.thumbnailImageUri = Catan.UI.HighDefinition.getBase64String(renderer);
                         }
+                        Image.getCroppedAndResizedBase64Uri(canvas, function(thumbnailImageUri) {
+                            scope.$apply(function(){
+                                scope.mapData.thumbnailImageUri = thumbnailImageUri;
+                            });
+                        });
                     });
                 }
             };

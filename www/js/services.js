@@ -30,7 +30,7 @@
         })
 
         .factory('Favorites', function (localStorageService) {
-            var saveAll = function(mapsData) {
+            var saveAll = function (mapsData) {
                 var serializedMapsData = [];
                 for (var i = 0; i < mapsData.length; i++) {
                     mapsData[i].map = Catan.Map.serialize(mapsData[i].map);
@@ -78,40 +78,108 @@
         })
 
         .factory('Image', function () {
+
+            function getNonWhiteCoordinates(canvas) {
+                // from http://stackoverflow.com/questions/12175991/crop-image-white-space-automatically-using-jquery
+                var context = canvas.getContext('2d');
+                var imgWidth = canvas.width, imgHeight = canvas.height,
+                    imageData = context.getImageData(0, 0, imgWidth, imgHeight),
+                    data = imageData.data,
+                    getRBG = function (x, y) {
+                        var offset = imgWidth * y + x;
+                        return {
+                            red: data[offset * 4],
+                            green: data[offset * 4 + 1],
+                            blue: data[offset * 4 + 2],
+                            opacity: data[offset * 4 + 3]
+                        };
+                    },
+                    isWhite = function (rgb) {
+                        // many images contain noise, as the white is not a pure #fff white
+                        return rgb.red > 200 && rgb.green > 200 && rgb.blue > 200;
+                    },
+                    scanY = function (fromTop) {
+                        var offset = fromTop ? 1 : -1;
+
+                        // loop through each row
+                        for (var y = fromTop ? 0 : imgHeight - 1; fromTop ? (y < imgHeight) : (y > -1); y += offset) {
+
+                            // loop through each column
+                            for (var x = 0; x < imgWidth; x++) {
+                                var rgb = getRBG(x, y);
+                                if (!isWhite(rgb)) {
+                                    return y;
+                                }
+                            }
+                        }
+                        return null; // all image is white
+                    },
+                    scanX = function (fromLeft) {
+                        var offset = fromLeft ? 1 : -1;
+
+                        // loop through each column
+                        for (var x = fromLeft ? 0 : imgWidth - 1; fromLeft ? (x < imgWidth) : (x > -1); x += offset) {
+
+                            // loop through each row
+                            for (var y = 0; y < imgHeight; y++) {
+                                var rgb = getRBG(x, y);
+                                if (!isWhite(rgb)) {
+                                    return x;
+                                }
+                            }
+                        }
+                        return null; // all image is white
+                    };
+
+                var res = {
+                    cropTop: scanY(true),
+                    cropBottom: scanY(false),
+                    cropLeft: scanX(true),
+                    cropRight: scanX(false)
+                };
+                res.cropWidth = res.cropRight - res.cropLeft;
+                res.cropHeight = res.cropBottom - res.cropTop;
+
+                return res;
+            }
+
             var Image = {
                 getThumbnailWidth: function () {
-                    return 80;
+                    return 150;
                 },
                 getThumbnailHeight: function () {
-                    return 80;
+                    return 150;
                 },
-                resizeBase64Uri: function (base64Uri, callback, wantedWidth, wantedHeight) {
+                getCroppedAndResizedBase64Uri: function (canvasToCropAndResize, callback, wantedWidth, wantedHeight) {
                     wantedWidth = wantedWidth || Image.getThumbnailWidth();
                     wantedHeight = wantedHeight || Image.getThumbnailHeight();
 
-                    // We create an image to receive the Data URI
-                    var img = document.createElement('img');
+                    var canvas = document.createElement('canvas');
+                    var context = canvas.getContext('2d');
+                    var imageObj = document.createElement('img');
 
-                    // When the event "onload" is triggered we can resize the image.
-                    img.onload = function () {
-                        // We create a canvas and get its context.
-                        var canvas = document.createElement('canvas');
-                        var ctx = canvas.getContext('2d');
+                    var cropCoordinates = getNonWhiteCoordinates(canvasToCropAndResize);
 
-                        // We set the dimensions at the wanted size.
-                        canvas.width = wantedWidth;
-                        canvas.height = wantedHeight;
+                    imageObj.onload = function () {
 
-                        // We resize the image with the canvas method drawImage();
-                        ctx.drawImage(this, 0, 0, wantedWidth, wantedHeight);
+                        // draw cropped image based on http://www.html5canvastutorials.com/tutorials/html5-canvas-image-crop/
+                        var sourceX = cropCoordinates.cropLeft;
+                        var sourceY = cropCoordinates.cropTop;
+                        var sourceWidth = cropCoordinates.cropWidth;
+                        var sourceHeight = cropCoordinates.cropHeight;
+                        var destWidth = Image.getThumbnailWidth();
+                        var destHeight = Image.getThumbnailHeight();
+                        var destX = 0;
+                        var destY = 0;
 
-                        var resizedBase64Uri = canvas.toDataURL();
+                        canvas.width = destWidth;
+                        canvas.height = destHeight;
+                        context.drawImage(imageObj, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
 
-                        callback(resizedBase64Uri);
+                        callback(canvas.toDataURL());
                     };
 
-                    // We put the Data URI in the image's src attribute
-                    img.src = base64Uri;
+                    imageObj.src = canvasToCropAndResize.toDataURL();
                 }
             };
 
