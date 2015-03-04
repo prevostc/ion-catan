@@ -123,7 +123,8 @@
             return {
                 restrict: 'E',
                 scope: {
-                    mapData: '=mapData'
+                    mapData: '=mapData',
+                    generateThumbnail: '@generateThumbnail'
                 },
                 template: '<canvas></canvas>',
                 link: function(scope, element, attrs) {
@@ -159,11 +160,14 @@
                                 scope.canvasContainer.parentElement.offsetHeight
                             );
                         }
-                        Image.getCroppedAndResizedBase64Uri(canvas, function(thumbnailImageUri) {
-                            scope.$apply(function(){
-                                scope.mapData.thumbnailImageUri = thumbnailImageUri;
+
+                        if (scope.generateThumbnail) {
+                            Image.getCroppedAndResizedBase64Uri(canvas, function(thumbnailImageUri) {
+                                scope.$apply(function(){
+                                    scope.mapData.thumbnailImageUri = thumbnailImageUri;
+                                });
                             });
-                        });
+                        }
                     });
                 }
             };
