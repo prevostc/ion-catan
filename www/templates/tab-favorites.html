@@ -1,7 +1,9 @@
 <ion-view view-title="Favorites">
-    <ion-nav-buttons side="secondary">
+    <ion-nav-buttons side="left" class="hide"></ion-nav-buttons>
+    <ion-nav-buttons side="right">
         <button
             class="button button-icon icon ion-ios-trash-outline"
+            ng-class="{'hide': items.length === 0}"
             ng-click="toggleDeleteButtons()">
         </button>
     </ion-nav-buttons>
@@ -18,10 +20,10 @@
                 <ion-delete-button class="ion-minus-circled" ng-click="deleteItem(item)"></ion-delete-button>
             </ion-item>
         </ion-list>
-        <div class="card" ng-if="items.length == 0">
+        <div class="card" ng-if="items.length === 0">
             <div class="item item-text-wrap">
                 <h2>Tap <span class="favorite-button icon ion-star"></span> to save a map!</h2>
-                <p>Please go to the <a href="#/tab/map">map tab</a>, generate a map and press the star button to save a map as a favorite. You may then come back here to list and manage your favorite maps.</p>
+                <p>Please go to the <a href="#/tab/map">map tab</a>, generate a map and press the star button on the top-right header to save a map as a favorite. You may then come back here to list and manage your favorite maps.</p>
             </div>
         </div>
     </ion-content>
