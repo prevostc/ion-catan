@@ -7,6 +7,15 @@
         </button>
     </ion-nav-buttons>
     <ion-content class="padding" scroll="false">
+        <div class="card" ng-if="!mapData.map">
+            <div class="item item-text-wrap">
+                <h2>Welcome to <strong>Settlers: Easy Map</strong></h2>
+                <p>
+                    Please tap the <span class="favorite-button icon ion-shuffle"></span> button to generate a Settlers map.
+                    Be your journey full of glory and treason and may the thief be with you.
+                </p>
+            </div>
+        </div>
         <div class="canvas-container">
             <map map-data="mapData" generate-thumbnail="true"></map>
         </div>
