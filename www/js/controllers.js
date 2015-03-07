@@ -116,6 +116,9 @@
                         $scope.items = Favorites.fetchAll();
                     });
                 });
+                $scope.$on('$ionicView.beforeLeave', function (event, data) {
+                    $ionicListDelegate.showDelete(false);
+                });
 
                 $scope.toggleDeleteButtons = function () {
                     $ionicListDelegate.showDelete(!$ionicListDelegate.showDelete());
