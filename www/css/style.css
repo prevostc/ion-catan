@@ -32,3 +32,7 @@
 .ion-checkmark.favorite-button, .ion-checkmark.favorite-button:focus, .ion-checkmark.favorite-button:hover {
     color: rgb(43, 174, 55);
 }
+
+.home.spacer{
+    height: 1000px;
+}
