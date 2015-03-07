@@ -21,8 +21,13 @@ var deleteFolderRecursive = function(removePath) {
   }
 };
 
-var iosPlatformsDir = path.resolve(__dirname, '../../platforms/ios/www/lib/ionic/scss');
-var androidPlatformsDir = path.resolve(__dirname, '../../platforms/android/assets/www/lib/ionic/scss');
+var wwwPrefixes = [
+    //'../../platforms/ios/www',
+    '../../platforms/android/assets/www'
+];
 
-deleteFolderRecursive(iosPlatformsDir);
-deleteFolderRecursive(androidPlatformsDir);
+for (var i = 0 ; i < wwwPrefixes.length ; i++) {
+    deleteFolderRecursive(path.resolve(__dirname, wwwPrefixes[i] + '/lib'));
+    deleteFolderRecursive(path.resolve(__dirname, wwwPrefixes[i] + '/js'));
+    deleteFolderRecursive(path.resolve(__dirname, wwwPrefixes[i] + '/css'));
+}

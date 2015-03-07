@@ -1,13 +1,12 @@
 {
-  "name": "myApp",
-  "private": "true",
-  "devDependencies": {
-    "ionic": "driftyco/ionic-bower#1.0.0-beta.14"
-  },
-  "dependencies": {
-    "angular-local-storage": "~0.1.5",
-    "pixi": "~2.2.3",
-    "Faker": "~2.1.2",
-    "ionicons": "~2.0.1"
-  }
+    "name": "myApp",
+    "private": "true",
+    "devDependencies": {
+    },
+    "dependencies": {
+        "ionic": "driftyco/ionic-bower#1.0.0-rc.0",
+        "angular-local-storage": "~0.1.5",
+        "pixi": "~2.2.3",
+        "Faker": "~2.1.2"
+    }
 }

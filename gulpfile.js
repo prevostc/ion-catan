@@ -13,10 +13,21 @@ var gulpFilter = require('gulp-filter');
 
 var paths = {
     sass: ['./scss/**/*.scss'],
-    jsProject: ['./www/js/**/*.js'],
+    jsProject: [
+        "./www/js/catan/js/catan.js",
+        "./www/js/catan/js/hexagon.js",
+        "./www/js/catan/js/map.js",
+        "./www/js/catan/js/tools.js",
+        "./www/js/catan/js/ui.js",
+        "./www/js/catan/js/position.js",
+        "./www/js/catan/js/generator/generator.js",
+        "./www/js/catan/js/generator/generator.land.js",
+        "./www/js/catan/js/generator/generator.number.js",
+        "./www/js/catan/js/generator/generator.harbor.js",
+        './www/js/**/*.js'],
     jsProjectTarget: 'project.js',
     jsVendorTarget: 'vendor.js',
-    cssProject: ['./www/css/**/*.css'],
+    cssProject: ['./www/css/style.css'],
     cssProjectTarget: 'project.css',
     cssVendorTarget: 'vendor.css',
     dist: 'www/dist'
@@ -26,9 +37,7 @@ gulp.task('default', ['sass']);
 
 gulp.task('sass', function (done) {
     gulp.src('./scss/ionic.app.scss')
-        .pipe(sourcemaps.init())
         .pipe(sass())
-        .pipe(sourcemaps.write())
         .pipe(gulp.dest('./www/css/from_scss'))
         .on('end', done);
 });
@@ -60,37 +69,39 @@ gulp.task('git-check', function (done) {
 });
 
 
+gulp.task('build', function() {
+    gulp.start('sass');
+    gulp.start('js-concat-project');
+    gulp.start('js-concat-vendor');
+    gulp.start('css-concat-project');
+    gulp.start('css-concat-vendor');
+    gulp.start('fonts-concat-vendor');
+});
+
+
 gulp.task('js-concat-project', function () {
     return gulp.src(paths.jsProject)
-        .pipe(sourcemaps.init())
         .pipe(concat(paths.jsProjectTarget))
-        .pipe(sourcemaps.write())
         .pipe(gulp.dest(paths.dist));
 });
 
 gulp.task('js-concat-vendor', function () {
     return gulp.src(mainBowerFiles())
         .pipe(gulpFilter('**/*.js'))
-        .pipe(sourcemaps.init())
         .pipe(concat(paths.jsVendorTarget))
-        .pipe(sourcemaps.write())
         .pipe(gulp.dest(paths.dist));
 });
 
 gulp.task('css-concat-project', function () {
     return gulp.src(paths.cssProject)
-        .pipe(sourcemaps.init())
         .pipe(concat(paths.cssProjectTarget))
-        .pipe(sourcemaps.write())
         .pipe(gulp.dest(paths.dist));
 });
 
 gulp.task('css-concat-vendor', function () {
     return gulp.src(mainBowerFiles())
         .pipe(gulpFilter('**/*.css'))
-        .pipe(sourcemaps.init())
         .pipe(concat(paths.cssVendorTarget))
-        .pipe(sourcemaps.write())
         .pipe(gulp.dest(paths.dist));
 });
 

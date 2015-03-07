@@ -2,12 +2,7 @@
   "name": "myApp",
   "app_id": "",
   "gulpStartupTasks": [
-      "js-concat-project",
-      "js-concat-vendor",
-      "css-concat-project",
-      "css-concat-vendor",
-      "fonts-concat-vendor",
-      "sass",
+      "build",
       "watch"
     ]
 }

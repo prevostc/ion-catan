@@ -10,3 +10,7 @@ plugins/
 *.apk
 icon*x*.png
 build_release.sh
+
+./www/lib/*
+./www/fonts/*
+./www/dist/*
