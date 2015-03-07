@@ -12,7 +12,8 @@
 
     angular.module('starter.controllers', [])
 
-        .controller('MapCtrl', function ($scope, $ionicPlatform, Settings, Favorites, Image, Faker, Id) {
+        .controller('MapCtrl', ['$scope', '$ionicPlatform', 'Settings', 'Favorites', 'Image', 'Faker', 'Id',
+                function ($scope, $ionicPlatform, Settings, Favorites, Image, Faker, Id) {
 
             $scope.generate = function () {
                 // generate map tiles
@@ -46,9 +47,9 @@
                 Favorites.save($scope.mapData);
                 $scope.starred = true;
             };
-        })
+        }])
 
-        .controller('SettingsCtrl', function ($scope, Settings) {
+        .controller('SettingsCtrl', ['$scope', 'Settings', function($scope, Settings) {
             $scope.tileTrioScoreLimitOptions = [
                 {id: 11, label: 'High (slower)'},
                 {id: 12, label: 'Normal'},
@@ -95,9 +96,10 @@
             $scope.updateUiDefinition = function () {
                 Settings.setUiDefinition(this.selectedUiDefinition.id);
             };
-        })
+        }])
 
-        .controller('FavoritesCtrl', function ($scope, Favorites, $ionicListDelegate) {
+        .controller('FavoritesCtrl', ['$scope', 'Favorites', '$ionicListDelegate',
+            function ($scope, Favorites, $ionicListDelegate) {
             $scope.items = Favorites.fetchAll();
 
             $scope.$on('$ionicView.enter', function(event, data) {
@@ -112,9 +114,9 @@
                 Favorites.remove(mapData);
                 $scope.items = Favorites.fetchAll();
             };
-        })
+        }])
 
-        .directive("map", function (Settings, Image)
+        .directive("map",['Settings', 'Image', function (Settings, Image)
         {
             return {
                 restrict: 'E',
@@ -167,10 +169,10 @@
                     });
                 }
             };
-        })
-        .controller('FavoritesViewCtrl', function ($scope, mapData) {
+        }])
+        .controller('FavoritesViewCtrl', ['$scope', 'mapData', function ($scope, mapData) {
             $scope.mapData = mapData;
-        })
+        }])
     ;
 
 

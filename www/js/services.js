@@ -4,7 +4,7 @@
 
     angular.module('starter.services', ['LocalStorageModule'])
 
-        .factory('Settings', function (localStorageService) {
+        .factory('Settings', ['localStorageService', function (localStorageService) {
             return {
                 getTileTrioScoreLimit: function () {
                     return localStorageService.get('tileTrioScoreLimit') || 13;
@@ -27,9 +27,9 @@
                     localStorageService.set('uiDefinition', uiDefinition);
                 }
             };
-        })
+        }])
 
-        .factory('Favorites', function (localStorageService) {
+        .factory('Favorites', ['localStorageService',  function (localStorageService) {
             var saveAll = function (mapsData) {
                 var serializedMapsData = [];
                 for (var i = 0; i < mapsData.length; i++) {
@@ -75,7 +75,7 @@
                 }
             };
             return service;
-        })
+        }])
 
         .factory('Image', function () {
 
@@ -197,7 +197,7 @@
             };
         })
 
-        .factory('Id', function (localStorageService) {
+        .factory('Id', ['localStorageService', function (localStorageService) {
             var Id = {
                 next: function () {
                     var next = Id.current() + 1;
@@ -209,7 +209,7 @@
                 }
             };
             return Id;
-        })
+        }])
     ;
 
 })(angular, faker, Catan);

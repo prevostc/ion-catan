@@ -11,7 +11,7 @@
     // 'starter.controllers' is found in controllers.js
     angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
-        .run(function ($ionicPlatform, $window) {
+        .run(['$ionicPlatform', '$window', function ($ionicPlatform, $window) {
             $ionicPlatform.ready(function () {
                 // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
                 // for form inputs)
@@ -23,9 +23,9 @@
                     $window.StatusBar.styleDefault();
                 }
             });
-        })
+        }])
 
-        .config(function ($stateProvider, $urlRouterProvider) {
+        .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
 
             // Ionic uses AngularUI Router which uses the concept of states
             // Learn more here: https://github.com/angular-ui/ui-router
@@ -95,6 +95,6 @@
             // if none of the above states are matched, use this as the fallback
             $urlRouterProvider.otherwise('/tab/map');
 
-        });
+        }]);
 
 })(angular);
