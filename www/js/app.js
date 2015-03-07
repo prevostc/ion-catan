@@ -82,11 +82,7 @@
                     },
                     resolve: {
                         mapData: function ($stateParams, Favorites) {
-                            var mapId = parseInt($stateParams.mapData);
-                            if (isNaN(mapId)) {
-                                return null;
-                            }
-                            return Favorites.fetchById(mapId);
+                            return Favorites.fetchById($stateParams.mapData);
                         }
                     }
                 })
