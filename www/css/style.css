@@ -26,11 +26,8 @@
 }
 
 
-.ion-star.favorite-button, .ion-star.favorite-button:focus, .ion-star.favorite-button:hover {
+.ion-ios-star.favorite-button, .ion-ios-star.favorite-button:focus, .ion-ios-star.favorite-button:hover {
     color: rgb(255, 206, 52);
-}
-.ion-checkmark.favorite-button, .ion-checkmark.favorite-button:focus, .ion-checkmark.favorite-button:hover {
-    color: rgb(43, 174, 55);
 }
 
 .home.spacer{
