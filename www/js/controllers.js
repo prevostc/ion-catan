@@ -112,11 +112,6 @@
 
                 $scope.$on('$ionicView.enter', function (event, data) {
                     $timeout(function () {
-                        $scope.items = Favorites.fetchAll();
-                    });
-                });
-                $scope.$on('$ionicView.leave', function (event, data) {
-                    $timeout(function () {
                         $ionicListDelegate.showDelete(false);
                         $scope.items = Favorites.fetchAll();
                     });
