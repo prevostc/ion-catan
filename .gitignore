@@ -11,6 +11,6 @@ plugins/
 icon*x*.png
 build_release.sh
 
-./www/lib/*
-./www/fonts/*
-./www/dist/*
+www/lib/*
+www/fonts/*
+www/dist/*
