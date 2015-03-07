@@ -10,6 +10,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var debug = require('gulp-debug');
 var mainBowerFiles = require('main-bower-files');
 var gulpFilter = require('gulp-filter');
+var templateCache = require('gulp-angular-templatecache');
 
 var paths = {
     sass: ['./scss/**/*.scss'],
@@ -46,6 +47,7 @@ gulp.task('watch', function () {
     gulp.watch(paths.sass, ['sass']);
     gulp.watch(paths.jsProject, ['js-concat-project']);
     gulp.watch(paths.cssProject, ['css-concat-project']);
+    gulp.watch('www/templates/**/*.html', ['html-concat-templates']);
 });
 
 gulp.task('install', ['git-check'], function () {
@@ -76,6 +78,7 @@ gulp.task('build', function() {
     gulp.start('css-concat-project');
     gulp.start('css-concat-vendor');
     gulp.start('fonts-concat-vendor');
+    gulp.start('html-concat-templates');
 });
 
 
@@ -112,4 +115,12 @@ gulp.task('fonts-concat-vendor', function () {
         }))
         .pipe(debug())
         .pipe(gulp.dest('./www/fonts/'));
+});
+
+gulp.task('html-concat-templates', function() {
+    gulp.src('www/templates/**/*.html')
+        .pipe(templateCache({
+            module:'templatescache', standalone: true, root: './templates/'
+        }))
+        .pipe(gulp.dest('www/dist/'));
 });
