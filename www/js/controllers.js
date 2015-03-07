@@ -13,43 +13,43 @@
     angular.module('starter.controllers', [])
 
         .controller('MapCtrl', ['$scope', '$ionicPlatform', 'Settings', 'Favorites', 'Image', 'Faker', 'Id',
-                function ($scope, $ionicPlatform, Settings, Favorites, Image, Faker, Id) {
+            function ($scope, $ionicPlatform, Settings, Favorites, Image, Faker, Id) {
 
-            $scope.generate = function () {
-                // generate map tiles
-                var mapData = new MapData();
-                mapData.map = Catan.Generator.Map.generate(Settings.getTileTrioScoreLimit(), Settings.getHarborGenerationStrategy());
+                $scope.generate = function () {
+                    // generate map tiles
+                    var mapData = new MapData();
+                    mapData.map = Catan.Generator.Map.generate(Settings.getTileTrioScoreLimit(), Settings.getHarborGenerationStrategy());
 
-                // generate map id
-                mapData.id = Id.next();
+                    // generate map id
+                    mapData.id = Id.next();
 
-                // generate map name and catchphrase
-                mapData.name = Faker.getMapName();
-                mapData.catchPhrase = Faker.getMapCatchPhrase();
+                    // generate map name and catchphrase
+                    mapData.name = Faker.getMapName();
+                    mapData.catchPhrase = Faker.getMapCatchPhrase();
 
-                // store generation metadata
-                mapData.harborGenerationPhrase = {
-                    'separate-tiles': 'Separate Tiles (18 tiles)',
-                    'coast-bars': 'Enclosing edges bars (6 long pieces)'
-                }[Settings.getHarborGenerationStrategy()];
-                mapData.fairnessPhrase = {
-                    11: 'Fair',
-                    12: 'Normal',
-                    13: 'Unfair'
-                }[Settings.getTileTrioScoreLimit()];
+                    // store generation metadata
+                    mapData.harborGenerationPhrase = {
+                        'separate-tiles': 'Separate Tiles (18 tiles)',
+                        'coast-bars': 'Enclosing edges bars (6 long pieces)'
+                    }[Settings.getHarborGenerationStrategy()];
+                    mapData.fairnessPhrase = {
+                        11: 'Fair',
+                        12: 'Normal',
+                        13: 'Unfair'
+                    }[Settings.getTileTrioScoreLimit()];
 
-                $scope.mapData = mapData;
+                    $scope.mapData = mapData;
+                    $scope.starred = false;
+                };
+
                 $scope.starred = false;
-            };
+                $scope.star = function () {
+                    Favorites.save($scope.mapData);
+                    $scope.starred = true;
+                };
+            }])
 
-            $scope.starred = false;
-            $scope.star = function() {
-                Favorites.save($scope.mapData);
-                $scope.starred = true;
-            };
-        }])
-
-        .controller('SettingsCtrl', ['$scope', 'Settings', function($scope, Settings) {
+        .controller('SettingsCtrl', ['$scope', 'Settings', function ($scope, Settings) {
             $scope.tileTrioScoreLimitOptions = [
                 {id: 11, label: 'High (slower)'},
                 {id: 12, label: 'Normal'},
@@ -98,26 +98,29 @@
             };
         }])
 
-        .controller('FavoritesCtrl', ['$scope', 'Favorites', '$ionicListDelegate',
-            function ($scope, Favorites, $ionicListDelegate) {
-            $scope.items = Favorites.fetchAll();
+        .controller('FavoritesCtrl', ['$scope', 'Favorites', '$ionicListDelegate', '$timeout',
+            function ($scope, Favorites, $ionicListDelegate, $timeout) {
+                $timeout(function () {
+                    $scope.items = Favorites.fetchAll();
+                });
 
-            $scope.$on('$ionicView.enter', function(event, data) {
-                $scope.items = Favorites.fetchAll();
-            });
+                $scope.$on('$ionicView.enter', function (event, data) {
+                    $timeout(function () {
+                        $scope.items = Favorites.fetchAll();
+                    });
+                });
 
-            $scope.toggleDeleteButtons = function() {
-                $ionicListDelegate.showDelete(! $ionicListDelegate.showDelete());
-            };
+                $scope.toggleDeleteButtons = function () {
+                    $ionicListDelegate.showDelete(!$ionicListDelegate.showDelete());
+                };
 
-            $scope.deleteItem = function(mapData) {
-                Favorites.remove(mapData);
-                $scope.items = Favorites.fetchAll();
-            };
-        }])
+                $scope.deleteItem = function (mapData) {
+                    Favorites.remove(mapData);
+                    $scope.items = Favorites.fetchAll();
+                };
+            }])
 
-        .directive("map",['Settings', 'Image', function (Settings, Image)
-        {
+        .directive("map", ['Settings', 'Image', function (Settings, Image) {
             return {
                 restrict: 'E',
                 scope: {
@@ -125,7 +128,7 @@
                     generateThumbnail: '@generateThumbnail'
                 },
                 template: '<canvas></canvas>',
-                link: function(scope, element, attrs) {
+                link: function (scope, element, attrs) {
                     var assetLoaded = false;
 
                     scope.canvasContainer = element[0];
@@ -134,13 +137,13 @@
                         scope.canvasContainer,
                         scope.canvasContainer.parentElement.offsetWidth,
                         scope.canvasContainer.parentElement.offsetHeight,
-                        function(renderer) {
+                        function (renderer) {
                             assetLoaded = true;
                         }
                     );
 
-                    scope.$watch('mapData', function(mapData) {
-                        if (! mapData) {
+                    scope.$watch('mapData', function (mapData) {
+                        if (!mapData) {
                             return;
                         }
                         var uiDefinition = Settings.getUiDefinition();
@@ -160,8 +163,8 @@
                         }
 
                         if (scope.generateThumbnail) {
-                            Image.getCroppedAndResizedBase64Uri(canvas, function(thumbnailImageUri) {
-                                scope.$apply(function(){
+                            Image.getCroppedAndResizedBase64Uri(canvas, function (thumbnailImageUri) {
+                                scope.$apply(function () {
                                     scope.mapData.thumbnailImageUri = thumbnailImageUri;
                                 });
                             });
@@ -174,7 +177,6 @@
             $scope.mapData = mapData;
         }])
     ;
-
 
 
 })(angular, Catan);

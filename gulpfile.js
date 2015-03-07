@@ -108,7 +108,8 @@ gulp.task('css-concat-vendor', function () {
 gulp.task('fonts-concat-vendor', function () {
     return gulp.src(mainBowerFiles())
         .pipe(gulpFilter(function (file) {
-            return /ionicons\/fonts/.test(file.path);
+            return /ionic\/fonts/.test(file.path);
         }))
+        .pipe(debug())
         .pipe(gulp.dest('./www/fonts/'));
 });
