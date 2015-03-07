@@ -33,3 +33,11 @@
 .home.spacer{
     height: 1000px;
 }
+
+.item .item-content {
+    padding-right: 5px;
+}
+.item .item-content.activated {
+    border-right: 3px solid #ccc;
+    background-color: #fff;
+}
