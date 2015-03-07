@@ -30,4 +30,5 @@ for (var i = 0 ; i < wwwPrefixes.length ; i++) {
     deleteFolderRecursive(path.resolve(__dirname, wwwPrefixes[i] + '/lib'));
     deleteFolderRecursive(path.resolve(__dirname, wwwPrefixes[i] + '/js'));
     deleteFolderRecursive(path.resolve(__dirname, wwwPrefixes[i] + '/css'));
+    deleteFolderRecursive(path.resolve(__dirname, wwwPrefixes[i] + '/dist/sourcemaps'));
 }
