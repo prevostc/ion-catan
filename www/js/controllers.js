@@ -12,8 +12,8 @@
 
     angular.module('starter.controllers', [])
 
-        .controller('MapCtrl', ['$scope', '$ionicPlatform', 'Settings', 'Favorites', 'Image', 'Faker', 'Id',
-            function ($scope, $ionicPlatform, Settings, Favorites, Image, Faker, Id) {
+        .controller('MapCtrl', ['$scope', '$ionicPlatform', '$timeout', 'Settings', 'Favorites', 'Image', 'Faker', 'Id',
+            function ($scope, $ionicPlatform, $timeout, Settings, Favorites, Image, Faker, Id) {
 
                 $scope.generate = function () {
                     // generate map tiles
@@ -43,9 +43,15 @@
                 };
 
                 $scope.starred = false;
-                $scope.star = function () {
-                    Favorites.save($scope.mapData);
-                    $scope.starred = true;
+                $scope.starToggle = function () {
+                    $timeout(function(){
+                        $scope.starred = !$scope.starred;
+                        if ($scope.starred) {
+                            Favorites.save($scope.mapData);
+                        } else {
+                            Favorites.remove($scope.mapData);
+                        }
+                    });
                 };
             }])
 
@@ -109,14 +115,22 @@
                         $scope.items = Favorites.fetchAll();
                     });
                 });
+                $scope.$on('$ionicView.leave', function (event, data) {
+                    $timeout(function () {
+                        $ionicListDelegate.showDelete(false);
+                        $scope.items = Favorites.fetchAll();
+                    });
+                });
 
                 $scope.toggleDeleteButtons = function () {
                     $ionicListDelegate.showDelete(!$ionicListDelegate.showDelete());
                 };
 
                 $scope.deleteItem = function (mapData) {
-                    Favorites.remove(mapData);
-                    $scope.items = Favorites.fetchAll();
+                    $timeout(function () {
+                        Favorites.remove(mapData);
+                        $scope.items = Favorites.fetchAll();
+                    });
                 };
             }])
 
