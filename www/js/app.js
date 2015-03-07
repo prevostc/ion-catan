@@ -81,9 +81,9 @@
                         }
                     },
                     resolve: {
-                        mapData: function ($stateParams, Favorites) {
+                        mapData: ['$stateParams', 'Favorites', function ($stateParams, Favorites) {
                             return Favorites.fetchById($stateParams.mapData);
-                        }
+                        }]
                     }
                 })
             ;

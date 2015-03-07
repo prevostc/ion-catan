@@ -11,6 +11,13 @@ var debug = require('gulp-debug');
 var mainBowerFiles = require('main-bower-files');
 var gulpFilter = require('gulp-filter');
 var templateCache = require('gulp-angular-templatecache');
+var gulpif = require('gulp-if');
+var uglify = require('gulp-uglify');
+
+var flags = {
+    sourceMaps: false,
+    uglify: true
+};
 
 var paths = {
     sass: ['./scss/**/*.scss'],
@@ -31,14 +38,18 @@ var paths = {
     cssProject: ['./www/css/style.css'],
     cssProjectTarget: 'project.css',
     cssVendorTarget: 'vendor.css',
-    dist: 'www/dist'
+    dist: 'www/dist',
+    sourceMaps: 'sourcemaps/' // relative to dist path
 };
 
 gulp.task('default', ['sass']);
 
 gulp.task('sass', function (done) {
     gulp.src('./scss/ionic.app.scss')
+        //.pipe(gulpif(flags.sourceMaps, sourcemaps.init()))
         .pipe(sass())
+        //.pipe(gulpif(flags.sourceMaps, sourcemaps.write()))
+        .pipe(gulpif(flags.uglify, minifyCss()))
         .pipe(gulp.dest('./www/css/from_scss'))
         .on('end', done);
 });
@@ -84,27 +95,39 @@ gulp.task('build', function() {
 
 gulp.task('js-concat-project', function () {
     return gulp.src(paths.jsProject)
+        .pipe(gulpif(flags.sourceMaps, sourcemaps.init()))
         .pipe(concat(paths.jsProjectTarget))
+        .pipe(gulpif(flags.uglify, uglify()))
+        .pipe(gulpif(flags.sourceMaps, sourcemaps.write(paths.sourceMaps)))
         .pipe(gulp.dest(paths.dist));
 });
 
 gulp.task('js-concat-vendor', function () {
     return gulp.src(mainBowerFiles())
         .pipe(gulpFilter('**/*.js'))
+        .pipe(gulpif(flags.sourceMaps, sourcemaps.init()))
         .pipe(concat(paths.jsVendorTarget))
+        .pipe(gulpif(flags.uglify, uglify()))
+        .pipe(gulpif(flags.sourceMaps, sourcemaps.write(paths.sourceMaps)))
         .pipe(gulp.dest(paths.dist));
 });
 
 gulp.task('css-concat-project', function () {
     return gulp.src(paths.cssProject)
+        .pipe(gulpif(flags.sourceMaps, sourcemaps.init()))
         .pipe(concat(paths.cssProjectTarget))
+        .pipe(gulpif(flags.uglify, minifyCss()))
+        .pipe(gulpif(flags.sourceMaps, sourcemaps.write(paths.sourceMaps)))
         .pipe(gulp.dest(paths.dist));
 });
 
 gulp.task('css-concat-vendor', function () {
     return gulp.src(mainBowerFiles())
         .pipe(gulpFilter('**/*.css'))
+        .pipe(gulpif(flags.sourceMaps, sourcemaps.init()))
         .pipe(concat(paths.cssVendorTarget))
+        .pipe(gulpif(flags.uglify, minifyCss()))
+        .pipe(gulpif(flags.sourceMaps, sourcemaps.write(paths.sourceMaps)))
         .pipe(gulp.dest(paths.dist));
 });
 
@@ -113,7 +136,6 @@ gulp.task('fonts-concat-vendor', function () {
         .pipe(gulpFilter(function (file) {
             return /ionic\/fonts/.test(file.path);
         }))
-        .pipe(debug())
         .pipe(gulp.dest('./www/fonts/'));
 });
 
@@ -122,5 +144,6 @@ gulp.task('html-concat-templates', function() {
         .pipe(templateCache({
             module:'templatescache', standalone: true, root: './templates/'
         }))
+        .pipe(gulpif(flags.uglify, uglify()))
         .pipe(gulp.dest('www/dist/'));
 });
