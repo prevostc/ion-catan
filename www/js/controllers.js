@@ -21,7 +21,7 @@
                     mapData.map = Catan.Generator.Map.generate(Settings.getTileTrioScoreLimit(), Settings.getHarborGenerationStrategy());
 
                     // generate map id
-                    mapData.id = Id.next();
+                    mapData.id = Id.uuid();
 
                     // generate map name and catchphrase
                     mapData.name = Faker.getMapName();
