@@ -1,8 +1,4 @@
 {
   "name": "myApp",
-  "app_id": "",
-  "gulpStartupTasks": [
-      "build",
-      "watch"
-    ]
+  "app_id": ""
 }
