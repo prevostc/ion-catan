@@ -22,7 +22,7 @@ var deleteFolderRecursive = function(removePath) {
 };
 
 var wwwPrefixes = [
-    //'../../platforms/ios/www',
+    '../../platforms/ios/www',
     '../../platforms/android/assets/www'
 ];
 
