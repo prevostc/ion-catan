@@ -39,7 +39,7 @@ var paths = {
     cssProjectTarget: 'project.css',
     cssVendorTarget: 'vendor.css',
     dist: 'www/dist',
-    sourceMaps: 'sourcemaps/' // relative to dist path
+    sourceMaps: 'sourcemaps/', // relative to dist path
 };
 
 gulp.task('default', ['sass']);
