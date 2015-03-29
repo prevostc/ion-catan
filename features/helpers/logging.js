@@ -9,10 +9,10 @@ exports.configure = function (driver) {
   });
 
   driver.on('command', function (meth, path, data) {
-    console.log(' > ' + meth.yellow, path.grey, data || '');
+    console.log('[command] > ' + meth.yellow, path.grey, data || '');
   });
 
   driver.on('http', function (meth, path, data) {
-    console.log(' > ' + meth.magenta, path, (data || '').grey);
+    console.log('[http] > ' + meth.magenta, path, (data || '').grey);
   });
 };

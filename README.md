@@ -22,4 +22,5 @@ The application sources (located in www/css, www/js, www/templates and index.htm
 
 TESTS
 -----
-PLATFORM=ios gulp tests
+./node_modules/.bin/appium --command-timeout 7
+./node_modules/.bin/cucumber-js
