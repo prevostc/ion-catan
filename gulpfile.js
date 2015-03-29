@@ -13,6 +13,7 @@ var gulpFilter = require('gulp-filter');
 var templateCache = require('gulp-angular-templatecache');
 var gulpif = require('gulp-if');
 var uglify = require('gulp-uglify');
+var mocha = require('gulp-mocha');
 
 var flags = {
     sourceMaps: false,
@@ -39,10 +40,20 @@ var paths = {
     cssProjectTarget: 'project.css',
     cssVendorTarget: 'vendor.css',
     dist: 'www/dist',
-    sourceMaps: 'sourcemaps/' // relative to dist path
+    sourceMaps: 'sourcemaps/', // relative to dist path
+    uat: {
+        all: ['./uat/**/*.uat.js'],
+        hybrid: ['./uat/hybrid/**/*.uat.js'],
+        native: ['./uat/native/**/*.uat.js']
+    },
 };
 
 gulp.task('default', ['sass']);
+
+gulp.task('tests', function() {
+    gulp.src(paths.uat.hybrid)
+        .pipe(mocha({reporter: 'spec'}));
+});
 
 gulp.task('sass', function (done) {
     gulp.src('./scss/ionic.app.scss')
