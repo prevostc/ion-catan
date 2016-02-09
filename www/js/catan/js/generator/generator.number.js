@@ -131,9 +131,20 @@
         };
         var overTrioLimit = true;
         var overDuoLimit = true;
-        for (var maxRepeat = 0; overTrioLimit && overDuoLimit && maxRepeat < 100; maxRepeat++) {
+        var missingLandNumber = true;
+
+        var isLandNumberMissing = function(col, line) {
+            var hexagon = map.get(col, line);
+
+            // test if a number is missing
+            if (hexagon.isLand() && !hexagon.isHarbor() && !hexagon.isCoast() && hexagon.land !== 6 && hexagon.number === undefined) {
+                missingLandNumber = true;
+            }
+        };
+        for (var maxRepeat = 0; missingLandNumber && overTrioLimit && overDuoLimit && maxRepeat < 100; maxRepeat++) {
             overTrioLimit = false;
             overDuoLimit = false;
+            missingLandNumber = false;
 
             // add some entropy
             coordinates = [];
@@ -152,9 +163,11 @@
                     map.eachConsecutiveNeighbour(i, j, isCoupleValidFunction, doSwapFunction);
                 }
             }
+
+            map.each(isLandNumberMissing);
         }
 
         // test if all trio are below the limit
-        return !(overTrioLimit || overDuoLimit);
+        return !(overTrioLimit || overDuoLimit || missingLandNumber);
     };
 })(Catan);
