@@ -3,12 +3,20 @@ require('../helpers/setup');
 var wd = require("wd"),
     _ = require('underscore'),
     serverConfigs = require('../helpers/appium-servers'),
-    path = require('path');
+    path = require('path'),
+    conf = require('../helpers/config');
 
 var driver;
 var allPassed = true,
     platform = process.env.PLATFORM || 'ios',
     iOSDeviceUDID = process.env.IOS_UDID;
+
+function sleep(time) {
+    var stop = new Date().getTime();
+    while(new Date().getTime() < stop + time) {
+        ;
+    }
+}
 
 function setupWithAppiumServer(serverConfig) {
     return wd.promiseChainRemote(serverConfig);
@@ -27,12 +35,12 @@ function addCapabilitiesAndInit(capabilities, driver) {
     }
 
     if (platform === 'android') {
-        desired.appPackage = process.env.APP_PACKAGE;
-        desired.appActivity = process.env.APP_ACTIVITY;
+        //desired.appPackage = process.env.APP_PACKAGE;
+        //desired.appActivity = process.env.APP_ACTIVITY;
     }
 
     if (process.env.SAUCE) {
-        desired.name = platform + ' - Can generate';
+        desired.name = platform + ' - Hybrid';
         desired.tags = ['sample'];
     }
     return driver.init(desired);
@@ -41,14 +49,21 @@ function addCapabilitiesAndInit(capabilities, driver) {
 function switchToUIWebViewContext(driver) {
     // instead of default NATIVE_APP context
 
-    return driver.setImplicitWaitTimeout(3000)
+    return driver.setImplicitWaitTimeout(conf.IMPLICIT_WAIT_TIMOUT)
         .contexts()
         .then(function (contexts) {
             var webViewContext = _.find(contexts, function (context) {
                 return context.indexOf('WEBVIEW') !== -1;
             });
+            console.log(contexts);
             console.log('webViewContext', webViewContext);
-            return driver.context(webViewContext);
+            var res = driver.context(webViewContext);
+
+            console.log('Waiting for application load');
+            sleep(conf.WAIT_APP_LOAD_DELAY);
+            console.log(Object.keys(driver));
+
+            return res;
         });
 }
 
@@ -57,7 +72,7 @@ function beforeAll() {
     driver = setupWithAppiumServer(serverConfig);
 
     // uncomment to see appium logs
-    //setupLogging(driver);
+    setupLogging(driver);
 
     driver = addCapabilitiesAndInit(require("../helpers/capabilities"), driver);
 
@@ -65,15 +80,9 @@ function beforeAll() {
 }
 
 function afterAll() {
-    function sleep(time) {
-        var stop = new Date().getTime();
-        while(new Date().getTime() < stop + time) {
-            ;
-        }
-    }
     driver.quit();
     console.log('Waiting for appium to quit');
-    sleep(7000);
+    sleep(conf.WAIT_APP_QUIT_DELAY);
 }
 
 // global setup

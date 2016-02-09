@@ -4,7 +4,7 @@
 
 exports.ios = {
   browserName: '',
-  'appium-version': '1.1',
+  'appium-version': '1.3',
   platformName: 'iOS',
   platformVersion: '8.2',
   deviceName: 'iPhone 4s',
@@ -12,35 +12,26 @@ exports.ios = {
 };
 
 exports.android = {
-  browserName: '',
-  'appium-version': '1.1',
+/*  browserName: '',
+  'appium-version': '1.3',
   platformName: 'Android',
-  platformVersion: '4.4',
-  deviceName: 'Android Emulator',
+  platformVersion: '5.0',
   automationName: 'selendroid',
-  deviceType: "phone",
-  androidUseRunningApp: false,
+  deviceName: 'Android',
   app: undefined, // will be set later
-};
-
-exports.android18 = {
-  browserName: '',
-  'appium-version': '1.1',
-  platformName: 'Android',
-  platformVersion: '4.3',
-  deviceName: 'Android Emulator',
-  automationName: 'selendroid',
-  deviceType: "phone",
-  androidUseRunningApp: false,
-  app: undefined // will be set later
-};
-
-exports.selendroid16 = {
-  browserName: '',
-  'appium-version': '1.1',
-  platformName: 'Android',
-  platformVersion: '4.1',
-  automationName: 'selendroid',
-  deviceName: 'Android Emulator',
-  app: undefined // will be set later
+  appActivity: '.CordovaApp',
+  appWaitActivity: '.CordovaApp',
+  appPackage: 'com.prevostc.settlerseasymap'
+*/
+    browserName: '',
+    'appium-version': '1.3',
+    platformName: 'Android',
+    platformVersion: '4.4',
+    deviceName: 'Android Emulator',
+    automationName: 'Selendroid',
+    deviceType: "phone",
+    androidUseRunningApp: false,
+    appPackage: 'com.prevostc.settlerseasymap',
+    appActivity: '.CordovaApp',
+    app: undefined // will be set later
 };

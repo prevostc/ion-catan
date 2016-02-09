@@ -22,5 +22,5 @@ The application sources (located in www/css, www/js, www/templates and index.htm
 
 TESTS
 -----
-./node_modules/.bin/appium --command-timeout 7
+./node_modules/.bin/appium --full-reset --command-timeout 7 # uninstall the app on each run and have a timeout of 7s
 ./node_modules/.bin/cucumber-js
