@@ -1,12 +1,18 @@
 {
-    "name": "myApp",
-    "private": "true",
-    "devDependencies": {
-    },
-    "dependencies": {
-        "ionic": "driftyco/ionic-bower#1.0.0-rc.0",
-        "angular-local-storage": "~0.1.5",
-        "pixi": "~2.2.3",
-        "Faker": "~2.1.2"
+  "name": "SettlersEasyMap",
+  "private": "true",
+  "dependencies": {
+    "ionic": "driftyco/ionic-bower#1.0.0-rc.0",
+    "angular-local-storage": "~0.1.5",
+    "pixi": "~2.2.3",
+    "Faker": "~2.1.2",
+    "ionic-platform-web-client": "^0.2.1"
+  },
+  "overrides": {
+    "ionic-platform-web-client": {
+      "main": [
+        "./dist/ionic.io.bundle.min.js"
+      ]
     }
+  }
 }

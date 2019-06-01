@@ -12,8 +12,8 @@
 
     angular.module('starter.controllers', [])
 
-        .controller('MapCtrl', ['$scope', '$ionicPlatform', '$timeout', 'Settings', 'Favorites', 'Image', 'Faker', 'Id',
-            function ($scope, $ionicPlatform, $timeout, Settings, Favorites, Image, Faker, Id) {
+        .controller('MapCtrl', ['$scope', '$ionicPlatform', '$timeout', 'Settings', 'Favorites', 'Image', 'Faker', 'Id', '$ionicAnalytics',
+            function ($scope, $ionicPlatform, $timeout, Settings, Favorites, Image, Faker, Id, $ionicAnalytics) {
 
                 $scope.generate = function () {
                     // generate map tiles
@@ -48,14 +48,16 @@
                         $scope.starred = !$scope.starred;
                         if ($scope.starred) {
                             Favorites.save($scope.mapData);
+                            $ionicAnalytics.track('star');
                         } else {
                             Favorites.remove($scope.mapData);
+                            $ionicAnalytics.track('unstar');
                         }
                     });
                 };
             }])
 
-        .controller('SettingsCtrl', ['$scope', 'Settings', function ($scope, Settings) {
+        .controller('SettingsCtrl', ['$scope', 'Settings', '$ionicAnalytics', function ($scope, Settings, $ionicAnalytics) {
             $scope.tileTrioScoreLimitOptions = [
                 {id: 11, label: 'High (slower)'},
                 {id: 12, label: 'Normal'},
@@ -69,7 +71,17 @@
                 }
             }
             $scope.updateTileTrioScoreLimit = function () {
-                Settings.setTileTrioScoreLimit(this.selectedTileTrioScoreLimit.id);
+                var selectedId = this.selectedTileTrioScoreLimit.id;
+                Settings.setTileTrioScoreLimit(selectedId);
+                $ionicAnalytics.track('settings', {
+                    type: 'tile-trio-limit',
+                    value: $scope
+                        .tileTrioScoreLimitOptions
+                        .reduce(function(prev, curr){
+                            return curr.id === selectedId ? curr : prev;
+                        }, {})
+                        .label
+                });
             };
 
 
@@ -85,7 +97,18 @@
                 }
             }
             $scope.updateHarborGenerationStrategy = function () {
-                Settings.setHarborGenerationStrategy(this.selectedHarborGenerationStrategy.id);
+                var selectedId = this.selectedHarborGenerationStrategy.id;
+                Settings.setHarborGenerationStrategy(selectedId);
+
+                $ionicAnalytics.track('settings', {
+                    type: 'harbor-generation-strategy',
+                    value: $scope
+                        .harborGenerationStrategyOptions
+                        .reduce(function(prev, curr){
+                            return curr.id === selectedId ? curr : prev;
+                        }, {})
+                        .label
+                });
             };
 
             $scope.uiDefinitionOptions = [
@@ -100,7 +123,18 @@
                 }
             }
             $scope.updateUiDefinition = function () {
-                Settings.setUiDefinition(this.selectedUiDefinition.id);
+                var selectedId = this.selectedUiDefinition.id;
+                Settings.setUiDefinition(selectedId);
+
+                $ionicAnalytics.track('settings', {
+                    type: 'harbor-generation-strategy',
+                    value: $scope
+                        .uiDefinitionOptions
+                        .reduce(function(prev, curr){
+                            return curr.id === selectedId ? curr : prev;
+                        }, {})
+                        .label
+                });
             };
         }])
 

@@ -3,6 +3,7 @@
 
 node_modules/
 platforms/
+platforms.bck/
 plugins/
 .idea
 *.key
@@ -14,3 +15,4 @@ build_release.sh
 www/lib/*
 www/fonts/*
 www/dist/*
+.io-config.json

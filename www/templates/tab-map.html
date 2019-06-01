@@ -3,7 +3,8 @@
     <ion-nav-buttons side="right">
         <button ng-if="mapData.map"
                 class="button button-icon icon-right icon favorite-button"
-                ng-class="{'ion-ios-star': starred, 'ion-ios-star-outline': !starred}" ng-click="starToggle()">
+                ng-class="{'ion-ios-star': starred, 'ion-ios-star-outline': !starred}" ng-click="starToggle()"
+        >
         </button>
     </ion-nav-buttons>
     <ion-content class="padding" scroll="false">
@@ -23,7 +24,7 @@
     </ion-content>
     <ion-footer-bar>
         <div class="button-bar">
-            <button ng-click="generate()" class="button button-dark button-clear icon icon-right ion-shuffle">
+            <button ng-click="generate()" ion-track-tap="generateMap" class="button button-dark button-clear icon icon-right ion-shuffle">
                 Generate !
             </button>
         </div>

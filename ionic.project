@@ -1,4 +1,7 @@
 {
-  "name": "myApp",
-  "app_id": ""
+  "name": "SettlersEasyMap",
+  "app_id": "4711f544",
+  "gulpStartupTasks": [
+    "build"
+  ]
 }
